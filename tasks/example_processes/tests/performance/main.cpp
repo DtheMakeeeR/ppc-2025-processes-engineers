@@ -7,7 +7,7 @@
 
 namespace nesterov_a_test_task_processes {
 
-class GolovanovDMatrixMaxElemPerfTest : public ppc::util::BaseRunPerfTests<InType, OutType> {
+class ExampleRunPerfTestProcesses  : public ppc::util::BaseRunPerfTests<InType, OutType> {
   const int kCount_ = 100;
   InType input_data_{};
 
@@ -24,7 +24,7 @@ class GolovanovDMatrixMaxElemPerfTest : public ppc::util::BaseRunPerfTests<InTyp
   }
 };
 
-TEST_P(GolovanovDMatrixMaxElemPerfTest, RunPerfModes) {
+TEST_P(ExampleRunPerfTestProcesses , RunPerfModes) {
   ExecuteTest(GetParam());
 }
 
@@ -33,8 +33,8 @@ const auto kAllPerfTasks =
 
 const auto kGtestValues = ppc::util::TupleToGTestValues(kAllPerfTasks);
 
-const auto kPerfTestName = GolovanovDMatrixMaxElemPerfTest::CustomPerfTestName;
+const auto kPerfTestName = ExampleRunPerfTestProcesses ::CustomPerfTestName;
 
-INSTANTIATE_TEST_SUITE_P(RunModeTests, GolovanovDMatrixMaxElemPerfTest, kGtestValues, kPerfTestName);
+INSTANTIATE_TEST_SUITE_P(RunModeTests, ExampleRunPerfTestProcesses , kGtestValues, kPerfTestName);
 
 }  // namespace nesterov_a_test_task_processes

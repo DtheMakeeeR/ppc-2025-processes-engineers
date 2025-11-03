@@ -8,19 +8,30 @@
 namespace golovanov_d_matrix_max_elem {
 
 class GolovanovDMatrixMaxElemPerfTest : public ppc::util::BaseRunPerfTests<InType, OutType> {
-  const int kCount_ = 100;
   InType input_data_{};
-
+  double maximum = 1000;
   void SetUp() override {
-    input_data_ = input_data_;
+
+    std::vector<double> tmpVector(0);
+    int n = 5, m = 5; 
+    for(int i = 0; i < n; i++)
+    {
+      for(int j = 0; j < m; j++)
+      {
+        double value = i+j;
+        tmpVector.push_back(value);
+      }
+    } 
+    tmpVector[10] = maximum;
+    input_data_ = std::tuple<size_t, size_t, std::vector<double>>(n, m, tmpVector);
   }
 
   bool CheckTestOutputData(OutType &output_data) final {
-    if(output_data)
+    if(output_data == maximum)
     {
-      
+      return true;
     }
-    return input_data_ == input_data_;
+    return false;
   }
 
   InType GetTestInputData() final {
