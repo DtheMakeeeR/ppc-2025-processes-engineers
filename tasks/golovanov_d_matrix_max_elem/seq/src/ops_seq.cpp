@@ -1,9 +1,9 @@
 #include "golovanov_d_matrix_max_elem//seq/include/ops_seq.hpp"
 
+#include <float.h>
+
 #include <numeric>
 #include <vector>
-
-#include <float.h>
 
 #include "golovanov_d_matrix_max_elem//common/include/common.hpp"
 #include "util/include/util.hpp"
@@ -19,7 +19,7 @@ GolovanovDMatrixMaxElemSEQ::GolovanovDMatrixMaxElemSEQ(const InType &in) {
 bool GolovanovDMatrixMaxElemSEQ::ValidationImpl() {
   size_t columns = std::get<0>(GetInput());
   size_t strokes = std::get<1>(GetInput());
-  return (columns > 0) && (strokes > 0) && (std::get<2>(GetInput()).size() == strokes * columns) && (GetOutput()==0);
+  return (columns > 0) && (strokes > 0) && (std::get<2>(GetInput()).size() == strokes * columns) && (GetOutput() == 0);
 }
 
 bool GolovanovDMatrixMaxElemSEQ::PreProcessingImpl() {
@@ -29,10 +29,8 @@ bool GolovanovDMatrixMaxElemSEQ::PreProcessingImpl() {
 bool GolovanovDMatrixMaxElemSEQ::RunImpl() {
   std::vector<double> elems = std::get<2>(GetInput());
   double max = elems[0];
-  for(size_t i = 1; i < elems.size(); i++)
-  { 
-    if(elems[i] > max)
-    {
+  for (size_t i = 1; i < elems.size(); i++) {
+    if (elems[i] > max) {
       max = elems[i];
     }
   }

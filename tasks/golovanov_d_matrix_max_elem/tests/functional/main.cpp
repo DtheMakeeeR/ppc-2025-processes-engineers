@@ -26,12 +26,9 @@ class GolovanovDMatrixMaxElemFuncTest : public ppc::util::BaseRunFuncTests<InTyp
     std::string s1 = std::to_string(std::get<0>(test_param)) + "_";
     std::string s2 = std::to_string(std::get<1>(test_param)) + "_";
     std::string s3;
-    if(std::get<2>(test_param) < 0)
-    {
+    if (std::get<2>(test_param) < 0) {
       s3 = "minus" + std::to_string((int)-std::get<2>(test_param));
-    }
-    else
-    {
+    } else {
       s3 = std::to_string((int)std::get<2>(test_param));
     }
     return s1 + s2 + s3;
@@ -40,39 +37,34 @@ class GolovanovDMatrixMaxElemFuncTest : public ppc::util::BaseRunFuncTests<InTyp
  protected:
   double maximum;
   int maxPos;
+  
   void SetUp() override {
-    
     TestType params = std::get<static_cast<std::size_t>(ppc::util::GTestParamIndex::kTestParams)>(GetParam());
 
     std::vector<double> tmpVector(0);
-    size_t n = std::get<0>(params), m = std::get<1>(params); 
+    size_t n = std::get<0>(params), m = std::get<1>(params);
     maximum = std::get<2>(params);
-    for(size_t i = 0; i < n; i++)
-    {
-      for(size_t j = 0; j < m; j++)
-      {
+    for (size_t i = 0; i < n; i++) {
+      for (size_t j = 0; j < m; j++) {
         tmpVector.push_back(RandomDouble(-1000, maximum));
       }
-    } 
-    maxPos = RandomInt(0, m*n);
+    }
+    maxPos = RandomInt(0, m * n);
     tmpVector[maxPos] = maximum;
     input_data_ = std::tuple<size_t, size_t, std::vector<double>>(n, m, tmpVector);
   }
 
-  double RandomDouble(double min, double max)
-  {
+  double RandomDouble(double min, double max) {
     return min + (double)rand() / RAND_MAX * (max - min);
   }
-  int RandomInt(int min, int max)
-  {
-    return min + rand()%max;
+  int RandomInt(int min, int max) {
+    return min + rand() % max;
   }
   bool CheckTestOutputData(OutType &output_data) final {
     std::cout << " output_data: " << output_data;
     std::cout << " maximum: " << maximum << std::endl;
     std::cout << " maxPos: " << maxPos << std::endl;
-    if(output_data == maximum)
-    {
+    if (output_data == maximum) {
       return true;
     }
     return false;
@@ -81,7 +73,7 @@ class GolovanovDMatrixMaxElemFuncTest : public ppc::util::BaseRunFuncTests<InTyp
   InType GetTestInputData() final {
     return input_data_;
   }
-//ОБРАТИТЬ ВНИМАНИЕ
+  // ОБРАТИТЬ ВНИМАНИЕ
  private:
   InType input_data_;
 };
@@ -93,9 +85,9 @@ TEST_P(GolovanovDMatrixMaxElemFuncTest, TestTest1) {
 }
 const std::array<TestType, 3> kTestParam = {TestType(5, 5, 10.0), TestType(5, 5, -10.0), TestType(5, 5, 0)};
 
-const auto kTestTasksList =
-    std::tuple_cat(ppc::util::AddFuncTask<GolovanovDMatrixMaxElemMPI, InType>(kTestParam, PPC_SETTINGS_golovanov_d_matrix_max_elem),
-                   ppc::util::AddFuncTask<GolovanovDMatrixMaxElemSEQ, InType>(kTestParam, PPC_SETTINGS_golovanov_d_matrix_max_elem));
+const auto kTestTasksList = std::tuple_cat(
+    ppc::util::AddFuncTask<GolovanovDMatrixMaxElemMPI, InType>(kTestParam, PPC_SETTINGS_golovanov_d_matrix_max_elem),
+    ppc::util::AddFuncTask<GolovanovDMatrixMaxElemSEQ, InType>(kTestParam, PPC_SETTINGS_golovanov_d_matrix_max_elem));
 
 const auto kGtestValues = ppc::util::ExpandToValues(kTestTasksList);
 
