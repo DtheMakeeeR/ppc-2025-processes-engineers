@@ -18,8 +18,7 @@ GolovanovDMatrixMaxElemSEQ::GolovanovDMatrixMaxElemSEQ(const InType &in) {
 
 bool GolovanovDMatrixMaxElemSEQ::ValidationImpl() {
   size_t columns = std::get<0>(GetInput());
-  size_t strokes = std::get<1>(GetInput());\
-  std::cout<<"COLUMNS:" << columns << "STROKES:" << strokes;
+  size_t strokes = std::get<1>(GetInput());
   return (columns > 0) && (strokes > 0) && (std::get<2>(GetInput()).size() == strokes * columns) && (GetOutput()==0);
 }
 
@@ -37,6 +36,7 @@ bool GolovanovDMatrixMaxElemSEQ::RunImpl() {
       max = elems[i];
     }
   }
+  GetOutput() = max;
   return true;
 }
 

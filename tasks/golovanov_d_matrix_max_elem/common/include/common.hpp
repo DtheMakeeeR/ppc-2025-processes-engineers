@@ -9,7 +9,7 @@ namespace golovanov_d_matrix_max_elem {
 
 using InType = std::tuple<size_t, size_t, std::vector<double>>;
 using OutType = double;
-using TestType = std::string;
+using TestType = std::tuple<size_t, size_t, double>;
 using BaseTask = ppc::task::Task<InType, OutType>;
 
 }  // namespace golovanov_d_matrix_max_elem

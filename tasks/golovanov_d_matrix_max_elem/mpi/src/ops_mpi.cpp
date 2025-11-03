@@ -15,13 +15,13 @@ namespace golovanov_d_matrix_max_elem {
 GolovanovDMatrixMaxElemMPI::GolovanovDMatrixMaxElemMPI(const InType &in) {
   SetTypeOfTask(GetStaticTypeOfTask());
   GetInput() = in;
-  GetOutput() = 0;
+  GetOutput() = 1234;
 }
 
 bool GolovanovDMatrixMaxElemMPI::ValidationImpl() {
   size_t columns = std::get<0>(GetInput());
   size_t strokes = std::get<1>(GetInput());
-  return (columns > 0) && (strokes > 0) && (std::get<2>(GetInput()).size() == strokes * columns) && (GetOutput()==0);
+  return (columns > 0) && (strokes > 0) && (std::get<2>(GetInput()).size() == (strokes * columns)) && (GetOutput()==1234);
 }
 
 bool GolovanovDMatrixMaxElemMPI::PreProcessingImpl() {
@@ -30,7 +30,7 @@ bool GolovanovDMatrixMaxElemMPI::PreProcessingImpl() {
 
 bool GolovanovDMatrixMaxElemMPI::RunImpl() {
   int rank, processes;
-  size_t n = 0;
+  int n = 0;
   if(MPI_Comm_rank(MPI_COMM_WORLD, &rank) != MPI_SUCCESS)
   {
     std::cout << "Comm_rank Error!";
@@ -42,13 +42,14 @@ bool GolovanovDMatrixMaxElemMPI::RunImpl() {
     return false;
   };
   std::vector<double> elems;
-  double answer;
+  double answer = -1234;
   if(rank == 0)
   {
     auto columns = std::get<0>(GetInput());
     auto strokes = std::get<1>(GetInput());
     elems = std::get<2>(GetInput());
     auto count = columns*strokes;
+    
     n = count/processes;
     if (count%processes != 0)
     {
@@ -58,9 +59,9 @@ bool GolovanovDMatrixMaxElemMPI::RunImpl() {
        } 
        n++;
     }
-    
+    std::cout << std::endl << "count: " << count << " n: " << n << std::endl;
   }
-  if(MPI_Bcast(&n, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD)!= MPI_SUCCESS)
+  if(MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD)!= MPI_SUCCESS)
   {
     std::cout << "Bcast Error!";
     return false;
@@ -71,23 +72,22 @@ bool GolovanovDMatrixMaxElemMPI::RunImpl() {
     std::cout << "Scatter Error!";
     return false;
   }
-  double max = DBL_MIN;
-  for(size_t i = 0; i < n; i++)
+  double max = workVector[0];
+  for(int i = 0; i < n; i++)
   { 
     if(workVector[i] > max)
     {
       max = workVector[i];
     }
   }
-  if(MPI_Reduce(&max, &answer, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD)!= MPI_SUCCESS)
+    std::cout << "proc: " << rank << " localMax: " << max << std::endl;
+  if(MPI_Allreduce(&max, &answer, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD)!= MPI_SUCCESS)
   {
     std::cout << "Reduce Error!";
     return false;
   }
-  if(rank == 0) 
-  {
-    GetOutput() = answer;
-  }
+  GetOutput() = answer;
+  std::cout << "proc: " << rank << " globalMax after Reduce: " << answer << " GetOutput: " << GetOutput() << std::endl;
   return true;
 }
 
