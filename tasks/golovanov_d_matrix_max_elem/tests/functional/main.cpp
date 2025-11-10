@@ -42,16 +42,16 @@ class GolovanovDMatrixMaxElemFuncTest : public ppc::util::BaseRunFuncTests<InTyp
     TestType params = std::get<static_cast<std::size_t>(ppc::util::GTestParamIndex::kTestParams)>(GetParam());
 
     std::vector<double> tmpVector(0);
-    size_t n = std::get<0>(params), m = std::get<1>(params);
+    int n = std::get<0>(params), m = std::get<1>(params);
     maximum = std::get<2>(params);
-    for (size_t i = 0; i < n; i++) {
-      for (size_t j = 0; j < m; j++) {
+    for (int i = 0; i < n; i++) {
+      for (int j = 0; j < m; j++) {
         tmpVector.push_back(RandomDouble(-1000, maximum));
       }
     }
     maxPos = RandomInt(0, m * n);
     tmpVector[maxPos] = maximum;
-    input_data_ = std::tuple<size_t, size_t, std::vector<double>>(n, m, tmpVector);
+    input_data_ = std::tuple<int, int, std::vector<double>>(n, m, tmpVector);
   }
 
   double RandomDouble(double min, double max) {
@@ -62,8 +62,8 @@ class GolovanovDMatrixMaxElemFuncTest : public ppc::util::BaseRunFuncTests<InTyp
   }
   bool CheckTestOutputData(OutType &output_data) final {
     std::cout << " output_data: " << output_data;
-    std::cout << " maximum: " << maximum << std::endl;
-    std::cout << " maxPos: " << maxPos << std::endl;
+    std::cout << " maximum: " << maximum << "\n";
+    std::cout << " maxPos: " << maxPos << "\n";
     if (output_data == maximum) {
       return true;
     }

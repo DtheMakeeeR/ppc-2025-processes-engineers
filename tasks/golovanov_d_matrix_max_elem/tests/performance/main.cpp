@@ -23,7 +23,7 @@ class GolovanovDMatrixMaxElemPerfTest : public ppc::util::BaseRunPerfTests<InTyp
       }
     }
     tmpVector[10] = maximum;
-    input_data_ = std::tuple<size_t, size_t, std::vector<double>>(n, m, tmpVector);
+    input_data_ = std::tuple<int, int, std::vector<double>>(n, m, tmpVector);
   }
 
   bool CheckTestOutputData(OutType &output_data) final {
