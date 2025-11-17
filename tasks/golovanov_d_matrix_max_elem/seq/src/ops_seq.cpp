@@ -1,6 +1,5 @@
 #include "golovanov_d_matrix_max_elem//seq/include/ops_seq.hpp"
 
-
 #include <numeric>
 #include <vector>
 
@@ -18,7 +17,8 @@ GolovanovDMatrixMaxElemSEQ::GolovanovDMatrixMaxElemSEQ(const InType &in) {
 bool GolovanovDMatrixMaxElemSEQ::ValidationImpl() {
   int columns = std::get<0>(GetInput());
   int strokes = std::get<1>(GetInput());
-  return (columns > 0) && (strokes > 0) && (std::get<2>(GetInput()).size() == static_cast<size_t>(strokes * columns)) && (GetOutput() == 0);
+  return (columns > 0) && (strokes > 0) && (std::get<2>(GetInput()).size() == static_cast<size_t>(strokes * columns)) &&
+         (GetOutput() == 0);
 }
 
 bool GolovanovDMatrixMaxElemSEQ::PreProcessingImpl() {

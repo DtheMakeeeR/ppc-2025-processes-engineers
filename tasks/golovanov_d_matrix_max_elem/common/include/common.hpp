@@ -1,8 +1,8 @@
 #pragma once
 
-#include <tuple>
-#include <vector>    
 #include <algorithm>
+#include <tuple>
+#include <vector>
 
 #include "task/include/task.hpp"
 

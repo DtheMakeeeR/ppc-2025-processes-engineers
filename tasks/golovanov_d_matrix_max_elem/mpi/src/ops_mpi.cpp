@@ -2,8 +2,9 @@
 
 #include <mpi.h>
 
-#include <vector>
 #include <iostream>
+#include <vector>
+
 #include "golovanov_d_matrix_max_elem//common/include/common.hpp"
 
 namespace golovanov_d_matrix_max_elem {
