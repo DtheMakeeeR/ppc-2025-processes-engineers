@@ -30,8 +30,8 @@ bool GolovanovDMatrixMaxElemMPI::RunImpl() {
   int rank = 0;
   int processes = 0;
   int n = 0;
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank)
-  MPI_Comm_size(MPI_COMM_WORLD, &processes)
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &processes);
   std::vector<double> elems;
   double answer = -1234;
   if (rank == 0) {
@@ -47,19 +47,13 @@ bool GolovanovDMatrixMaxElemMPI::RunImpl() {
       }
       n++;
     }
-    std::cout << "\ncount: " << count << " n: " << n << "\n";
   }
-  MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD)
+  MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
   std::vector<double> work_vector(n);
-  MPI_Scatter(elems.data(), n, MPI_DOUBLE, work_vector.data(), n, MPI_DOUBLE, 0, MPI_COMM_WORLD)
+  MPI_Scatter(elems.data(), n, MPI_DOUBLE, work_vector.data(), n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
   double max = *std::max_element(work_vector.begin(), work_vector.end());
-  std::cout << "proc: " << rank << " localMax: " << max << "\n";
-  if (MPI_Allreduce(&max, &answer, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD) != MPI_SUCCESS) {
-    std::cout << "Reduce Error!";
-    return false;
-  }
+  MPI_Allreduce(&max, &answer, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
   GetOutput() = answer;
-  std::cout << "proc: " << rank << " globalMax after Reduce: " << answer << " GetOutput: " << GetOutput() << "\n";
   return true;
 }
 
