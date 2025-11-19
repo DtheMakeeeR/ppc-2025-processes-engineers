@@ -10,7 +10,7 @@ namespace golovanov_d_matrix_max_elem {
 class GolovanovDMatrixMaxElemPerfTest : public ppc::util::BaseRunPerfTests<InType, OutType> {
  private:
   InType input_data_{};
-  double maximum = 1000;
+  double maximum = 100000;
 
  public:
   void SetUp() override {
