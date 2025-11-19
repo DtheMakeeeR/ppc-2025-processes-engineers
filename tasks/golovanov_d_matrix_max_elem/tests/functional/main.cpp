@@ -61,9 +61,6 @@ class GolovanovDMatrixMaxElemFuncTest : public ppc::util::BaseRunFuncTests<InTyp
     return min + rand() % max;
   }
   bool CheckTestOutputData(OutType &output_data) final {
-    std::cout << " output_data: " << output_data;
-    std::cout << " maximum: " << maximum << "\n";
-    std::cout << " maxPos: " << maxPos << "\n";
     if (output_data == maximum) {
       return true;
     }

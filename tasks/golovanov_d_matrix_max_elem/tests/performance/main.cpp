@@ -10,12 +10,12 @@ namespace golovanov_d_matrix_max_elem {
 class GolovanovDMatrixMaxElemPerfTest : public ppc::util::BaseRunPerfTests<InType, OutType> {
  private:
   InType input_data_{};
-  double maximum = 1000;
+  double maximum = 100000;
 
  public:
   void SetUp() override {
     std::vector<double> tmpVector(0);
-    int n = 5, m = 5;
+    int n = 2000, m = 2000;
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < m; j++) {
         double value = i + j;
@@ -30,6 +30,7 @@ class GolovanovDMatrixMaxElemPerfTest : public ppc::util::BaseRunPerfTests<InTyp
     if (output_data == maximum) {
       return true;
     }
+    std::cout << "output data " << output_data;
     return false;
   }
 
