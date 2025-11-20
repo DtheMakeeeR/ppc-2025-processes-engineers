@@ -1,5 +1,8 @@
 #include <gtest/gtest.h>
 
+#include <tuple>
+#include <vector>
+
 #include "golovanov_d_matrix_max_elem//common/include/common.hpp"
 #include "golovanov_d_matrix_max_elem//mpi/include/ops_mpi.hpp"
 #include "golovanov_d_matrix_max_elem//seq/include/ops_seq.hpp"
@@ -9,29 +12,26 @@ namespace golovanov_d_matrix_max_elem {
 
 class GolovanovDMatrixMaxElemPerfTest : public ppc::util::BaseRunPerfTests<InType, OutType> {
  private:
-  InType input_data_{};
-  double maximum = 100000;
+  InType input_data_;
+  double maximum_ = 100000;
 
  public:
   void SetUp() override {
-    std::vector<double> tmpVector(0);
-    int n = 2000, m = 2000;
+    std::vector<double> tmp_vector(0);
+    int n = 2000;
+    int m = 2000;
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < m; j++) {
         double value = i + j;
-        tmpVector.push_back(value);
+        tmp_vector.push_back(value);
       }
     }
-    tmpVector[10] = maximum;
-    input_data_ = std::tuple<int, int, std::vector<double>>(n, m, tmpVector);
+    tmp_vector[10] = maximum_;
+    input_data_ = std::tuple<int, int, std::vector<double>>(n, m, tmp_vector);
   }
 
   bool CheckTestOutputData(OutType &output_data) final {
-    if (output_data == maximum) {
-      return true;
-    }
-    std::cout << "output data " << output_data;
-    return false;
+    return output_data == maximum_;
   }
 
   InType GetTestInputData() final {

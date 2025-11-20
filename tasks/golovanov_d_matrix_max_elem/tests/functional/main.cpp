@@ -1,15 +1,10 @@
 #include <gtest/gtest.h>
-#include <stb/stb_image.h>
 
-#include <algorithm>
 #include <array>
 #include <cstddef>
-#include <cstdint>
-#include <numeric>
-#include <stdexcept>
+#include <random>
 #include <string>
 #include <tuple>
-#include <utility>
 #include <vector>
 
 #include "golovanov_d_matrix_max_elem//common/include/common.hpp"
@@ -27,44 +22,40 @@ class GolovanovDMatrixMaxElemFuncTest : public ppc::util::BaseRunFuncTests<InTyp
     std::string s2 = std::to_string(std::get<1>(test_param)) + "_";
     std::string s3;
     if (std::get<2>(test_param) < 0) {
-      s3 = "minus" + std::to_string((int)-std::get<2>(test_param));
+      s3 = "minus" + std::to_string(static_cast<int>(-std::get<2>(test_param)));
     } else {
-      s3 = std::to_string((int)std::get<2>(test_param));
+      s3 = std::to_string(static_cast<int>(std::get<2>(test_param)));
     }
     return s1 + s2 + s3;
   }
 
  protected:
-  double maximum;
-  int maxPos;
+  double maximum{};
+  int max_pos{};
+  std::mt19937 gen{std::random_device{}()};
 
   void SetUp() override {
     TestType params = std::get<static_cast<std::size_t>(ppc::util::GTestParamIndex::kTestParams)>(GetParam());
 
-    std::vector<double> tmpVector(0);
-    int n = std::get<0>(params), m = std::get<1>(params);
+    std::vector<double> tmp_vector(0);
+    int n = std::get<0>(params);
+    int m = std::get<1>(params);
     maximum = std::get<2>(params);
+
+    std::uniform_real_distribution<double> real_dist(-1000, maximum);
+    std::uniform_int_distribution<int> int_dist(0, (n * m) - 1);
+
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < m; j++) {
-        tmpVector.push_back(RandomDouble(-1000, maximum));
+        tmp_vector.push_back(real_dist(gen));
       }
     }
-    maxPos = RandomInt(0, m * n);
-    tmpVector[maxPos] = maximum;
-    input_data_ = std::tuple<int, int, std::vector<double>>(n, m, tmpVector);
-  }
-
-  double RandomDouble(double min, double max) {
-    return min + (double)rand() / RAND_MAX * (max - min);
-  }
-  int RandomInt(int min, int max) {
-    return min + rand() % max;
+    max_pos = int_dist(gen);
+    tmp_vector[max_pos] = maximum;
+    input_data_ = std::tuple<int, int, std::vector<double>>(n, m, tmp_vector);
   }
   bool CheckTestOutputData(OutType &output_data) final {
-    if (output_data == maximum) {
-      return true;
-    }
-    return false;
+    return output_data == maximum;
   }
 
   InType GetTestInputData() final {
