@@ -1,12 +1,12 @@
 #include <gtest/gtest.h>
 
+#include <tuple>
+#include <vector>
+
 #include "golovanov_d_matrix_max_elem//common/include/common.hpp"
 #include "golovanov_d_matrix_max_elem//mpi/include/ops_mpi.hpp"
 #include "golovanov_d_matrix_max_elem//seq/include/ops_seq.hpp"
 #include "util/include/perf_test_util.hpp"
-
-#include <vector>    
-#include <tuple>     
 
 namespace golovanov_d_matrix_max_elem {
 

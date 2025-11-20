@@ -2,8 +2,8 @@
 
 #include <mpi.h>
 
-#include <vector>
 #include <algorithm>
+#include <vector>
 
 #include "golovanov_d_matrix_max_elem//common/include/common.hpp"
 
