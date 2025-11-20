@@ -30,9 +30,9 @@ class GolovanovDMatrixMaxElemFuncTest : public ppc::util::BaseRunFuncTests<InTyp
   }
 
  protected:
-  double maximum_{};
-  int max_pos_{};
-  std::mt19937 gen_{std::random_device{}()};
+  double maximum{};
+  int max_pos{};
+  std::mt19937 gen{std::random_device{}()};
 
   void SetUp() override {
     TestType params = std::get<static_cast<std::size_t>(ppc::util::GTestParamIndex::kTestParams)>(GetParam());
@@ -40,22 +40,22 @@ class GolovanovDMatrixMaxElemFuncTest : public ppc::util::BaseRunFuncTests<InTyp
     std::vector<double> tmp_vector(0);
     int n = std::get<0>(params);
     int m = std::get<1>(params);
-    maximum_ = std::get<2>(params);
+    maximum = std::get<2>(params);
 
-    std::uniform_real_distribution<double> real_dist(-1000, maximum_);
-    std::uniform_int_distribution<int> int_dist(0, n * m - 1);
+    std::uniform_real_distribution<double> real_dist(-1000, maximum);
+    std::uniform_int_distribution<int> int_dist(0, (n * m) - 1);
 
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < m; j++) {
-        tmp_vector.push_back(real_dist(gen_));
+        tmp_vector.push_back(real_dist(gen));
       }
     }
-    max_pos_ = int_dist(gen_);
-    tmp_vector[max_pos_] = maximum_;
+    max_pos = int_dist(gen);
+    tmp_vector[max_pos] = maximum;
     input_data_ = std::tuple<int, int, std::vector<double>>(n, m, tmp_vector);
   }
   bool CheckTestOutputData(OutType &output_data) final {
-    return output_data == maximum_;
+    return output_data == maximum;
   }
 
   InType GetTestInputData() final {

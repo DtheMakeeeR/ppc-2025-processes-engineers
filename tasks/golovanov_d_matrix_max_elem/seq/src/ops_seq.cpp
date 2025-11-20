@@ -26,7 +26,7 @@ bool GolovanovDMatrixMaxElemSEQ::PreProcessingImpl() {
 
 bool GolovanovDMatrixMaxElemSEQ::RunImpl() {
   std::vector<double> elems = std::get<2>(GetInput());
-  double max = *std::max_element(elems.begin(), elems.end());
+  double max = *std::ranges::max_element(elems);
   GetOutput() = max;
   return true;
 }

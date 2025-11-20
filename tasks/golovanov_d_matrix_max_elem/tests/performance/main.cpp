@@ -31,10 +31,7 @@ class GolovanovDMatrixMaxElemPerfTest : public ppc::util::BaseRunPerfTests<InTyp
   }
 
   bool CheckTestOutputData(OutType &output_data) final {
-    if (output_data == maximum_) {
-      return true;
-    }
-    return false;
+    return output_data == maximum_;
   }
 
   InType GetTestInputData() final {
