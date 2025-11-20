@@ -18,7 +18,7 @@ GolovanovDMatrixMaxElemMPI::GolovanovDMatrixMaxElemMPI(const InType &in) {
 bool GolovanovDMatrixMaxElemMPI::ValidationImpl() {
   int columns = std::get<0>(GetInput());
   int strokes = std::get<1>(GetInput());
-  return (columns > 0) && (strokes > 0) && (std::get<2>(GetInput()).size() == (strokes * columns)) &&
+  return (columns > 0) && (strokes > 0) && (static_cast<int>(std::get<2>(GetInput()).size()) == (strokes * columns)) &&
          (GetOutput() == 1234);
 }
 
@@ -51,7 +51,7 @@ bool GolovanovDMatrixMaxElemMPI::RunImpl() {
   MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
   std::vector<double> work_vector(n);
   MPI_Scatter(elems.data(), n, MPI_DOUBLE, work_vector.data(), n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-  double max = *std::max_element(work_vector);
+  double max = *std::max_element(work_vector.begin(), work_vector.end());
   MPI_Allreduce(&max, &answer, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
   GetOutput() = answer;
   return true;
