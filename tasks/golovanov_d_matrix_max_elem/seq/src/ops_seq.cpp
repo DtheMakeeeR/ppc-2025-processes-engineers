@@ -2,6 +2,7 @@
 
 #include <numeric>
 #include <vector>
+#include <algorithm>
 
 #include "golovanov_d_matrix_max_elem//common/include/common.hpp"
 #include "util/include/util.hpp"

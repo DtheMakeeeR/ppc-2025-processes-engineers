@@ -2,8 +2,8 @@
 
 #include <mpi.h>
 
-#include <iostream>
 #include <vector>
+#include <algorithm>
 
 #include "golovanov_d_matrix_max_elem//common/include/common.hpp"
 
@@ -18,7 +18,7 @@ GolovanovDMatrixMaxElemMPI::GolovanovDMatrixMaxElemMPI(const InType &in) {
 bool GolovanovDMatrixMaxElemMPI::ValidationImpl() {
   int columns = std::get<0>(GetInput());
   int strokes = std::get<1>(GetInput());
-  return (columns > 0) && (strokes > 0) && (std::get<2>(GetInput()).size() == static_cast<size_t>(strokes * columns)) &&
+  return (columns > 0) && (strokes > 0) && (std::get<2>(GetInput()).size() == (strokes * columns)) &&
          (GetOutput() == 1234);
 }
 
@@ -42,7 +42,7 @@ bool GolovanovDMatrixMaxElemMPI::RunImpl() {
 
     n = count / processes;
     if (count % processes != 0) {
-      for (int i = 0; i < processes - count % processes; i++) {
+      for (int i = 0; i < processes - (count % processes); i++) {
         elems.push_back(elems[0]);
       }
       n++;
@@ -51,7 +51,7 @@ bool GolovanovDMatrixMaxElemMPI::RunImpl() {
   MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
   std::vector<double> work_vector(n);
   MPI_Scatter(elems.data(), n, MPI_DOUBLE, work_vector.data(), n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-  double max = *std::max_element(work_vector.begin(), work_vector.end());
+  double max = *std::max_element(work_vector);
   MPI_Allreduce(&max, &answer, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
   GetOutput() = answer;
   return true;
