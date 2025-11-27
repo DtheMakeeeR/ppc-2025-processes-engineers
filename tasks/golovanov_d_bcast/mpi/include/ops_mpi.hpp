@@ -6,12 +6,12 @@
 
 namespace golovanov_d_bcast {
 
-class GolovanovDMatrixMaxElemMPI : public BaseTask {
+class GolovanovDBcastMPI : public BaseTask {
  public:
   static constexpr ppc::task::TypeOfTask GetStaticTypeOfTask() {
     return ppc::task::TypeOfTask::kMPI;
   }
-  explicit GolovanovDMatrixMaxElemMPI(const InType &in);
+  explicit GolovanovDBcastMPI(const InType &in);
 
  private:
   bool ValidationImpl() override;
@@ -19,7 +19,7 @@ class GolovanovDMatrixMaxElemMPI : public BaseTask {
   bool RunImpl() override;
   bool PostProcessingImpl() override;
   int MY_Bcast(void *buffer, int count, MPI_Datatype datatype,
-    int root, MPI_Comm comm)
+    int root, MPI_Comm comm);
 };
 
 }  // namespace golovanov_d_bcast

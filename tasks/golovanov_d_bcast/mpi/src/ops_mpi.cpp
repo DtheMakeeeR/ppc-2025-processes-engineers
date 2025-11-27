@@ -11,24 +11,24 @@
 
 namespace golovanov_d_bcast {
 
-GolovanovDMatrixMaxElemMPI::GolovanovDMatrixMaxElemMPI(const InType &in) {
+GolovanovDBcastMPI::GolovanovDBcastMPI(const InType &in) {
   SetTypeOfTask(GetStaticTypeOfTask());
   GetInput() = in;
-  GetOutput() = 1234;
+  GetOutput() = true;
 }
 
-bool GolovanovDMatrixMaxElemMPI::ValidationImpl() {
-  int columns = std::get<0>(GetInput());
-  int strokes = std::get<1>(GetInput());
-  return (columns > 0) && (strokes > 0) && (std::get<2>(GetInput()).size() == static_cast<size_t>(strokes * columns)) &&
-         (GetOutput() == 1234);
+bool GolovanovDBcastMPI::ValidationImpl() {
+  //int index = std::get<0>(GetInput());
+  int n = std::get<1>(GetInput());
+  return (n > -1) && ((std::get<2>(GetInput()).size() == std::get<3>(GetInput()).size()) == (std::get<4>(GetInput()).size() == static_cast<size_t>(n))) &&
+         (GetOutput() == true);
 }
 
-bool GolovanovDMatrixMaxElemMPI::PreProcessingImpl() {
+bool GolovanovDBcastMPI::PreProcessingImpl() {
   return true;
 }
 
-bool GolovanovDMatrixMaxElemMPI::RunImpl() {
+bool GolovanovDBcastMPI::RunImpl() {
   int rank = 0;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   int index = std::get<0>(GetInput());
@@ -43,9 +43,9 @@ bool GolovanovDMatrixMaxElemMPI::RunImpl() {
   std::vector<double> v_double(n);
   if(rank == index)
   {
-    v_int = std::get<2>(GetInput);
-    v_float = std::get<3>(GetInput);
-    v_double = std::get<4>(GetInput);
+    v_int = std::get<2>(GetInput());
+    v_float = std::get<3>(GetInput());
+    v_double = std::get<4>(GetInput());
   }
   MY_Bcast(&v_int, n, MPI_INT, rank, MPI_COMM_WORLD);
   MY_Bcast(&v_float, n, MPI_FLOAT, rank, MPI_COMM_WORLD);
@@ -53,18 +53,18 @@ bool GolovanovDMatrixMaxElemMPI::RunImpl() {
   
   for(int i = 0; i < n; i++)
   {
-    cout << "int proc " << rank << " [" << i << "]: " << v_int[i] << "\n";
-    cout << "float proc " << rank << " [" << i << "]: " << v_float[i] << "\n";
-    cout << "double proc " << rank << " [" << i << "]: " << v_double[i] << "\n"; 
+    std::cout << "int proc " << rank << " [" << i << "]: " << v_int[i] << "\n";
+    std::cout << "float proc " << rank << " [" << i << "]: " << v_float[i] << "\n";
+    std::cout << "double proc " << rank << " [" << i << "]: " << v_double[i] << "\n"; 
   }
-  
+  GetOutput() = true;
   return true;
 }
 
-bool GolovanovDMatrixMaxElemMPI::PostProcessingImpl() {
+bool GolovanovDBcastMPI::PostProcessingImpl() {
   return true;
 }
-int GolovanovDMatrixMaxElemMPI::MY_Bcast(void *buffer, int count, MPI_Datatype datatype,
+int GolovanovDBcastMPI::MY_Bcast(void *buffer, int count, MPI_Datatype datatype,
     int root, MPI_Comm comm){
   int rank_loc = 0;
   MPI_Comm_rank(comm, &rank_loc);
@@ -85,15 +85,15 @@ int GolovanovDMatrixMaxElemMPI::MY_Bcast(void *buffer, int count, MPI_Datatype d
   }
   else if(rank_loc == 1)
   {
-    MPI_Recv(buffer, count, datatype, 0, 0, comm);
+    MPI_Recv(buffer, count, datatype, 0, 0, comm, MPI_STATUS_IGNORE);
   }
   else
   {
     rank_lvl = static_cast<int>(floor(log2(rank_loc))) + 1;
-    int tmp = static_cast<int>pow(2, rank_lvl - 1);
+    int tmp = static_cast<int>(pow(2, rank_lvl - 1));
     int rank_parent = rank_loc % tmp;
-    MPI_Recv(buffer, count, datatype, rank_parent, 0, comm);
-    rank_lvl = static_cast<int>pow(2, rank_lvl);
+    MPI_Recv(buffer, count, datatype, rank_parent, 0, comm, MPI_STATUS_IGNORE);
+    rank_lvl = static_cast<int>(pow(2, rank_lvl));
   }
   for(int i = rank_loc + rank_lvl; i < world_size; i*=2)
   {

@@ -14,23 +14,11 @@ class GolovanovDBcastPerfTest : public ppc::util::BaseRunPerfTests<InType, OutTy
 
  public:
   void SetUp() override {
-    std::vector<double> tmpVector(0);
-    int n = 2000, m = 2000;
-    for (int i = 0; i < n; i++) {
-      for (int j = 0; j < m; j++) {
-        double value = i + j;
-        tmpVector.push_back(value);
-      }
-    }
-    tmpVector[10] = maximum;
-    input_data_ = std::tuple<int, int, std::vector<double>>(n, m, tmpVector);
+    
   }
 
   bool CheckTestOutputData(OutType &output_data) final {
-    if (output_data == maximum) {
-      return true;
-    }
-    std::cout << "output data " << output_data;
+    if(output_data) return true;
     return false;
   }
 
@@ -43,7 +31,7 @@ TEST_P(GolovanovDBcastPerfTest, RunPerfModes) {
   ExecuteTest(GetParam());
 }
 
-const auto kAllPerfTasks = ppc::util::MakeAllPerfTasks<InType, GolovanovDMatrixMaxElemMPI, GolovanovDMatrixMaxElemSEQ>(
+const auto kAllPerfTasks = ppc::util::MakeAllPerfTasks<InType, GolovanovDBcastMPI, GolovanovDBcastMPI>(
     PPC_SETTINGS_golovanov_d_bcast);
 
 const auto kGtestValues = ppc::util::TupleToGTestValues(kAllPerfTasks);

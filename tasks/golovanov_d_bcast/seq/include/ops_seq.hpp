@@ -5,12 +5,12 @@
 
 namespace golovanov_d_bcast {
 
-class GolovanovDMatrixMaxElemSEQ : public BaseTask {
+class GolovanovDBcastSEQ : public BaseTask {
  public:
   static constexpr ppc::task::TypeOfTask GetStaticTypeOfTask() {
     return ppc::task::TypeOfTask::kSEQ;
   }
-  explicit GolovanovDMatrixMaxElemSEQ(const InType &in);
+  explicit GolovanovDBcastSEQ(const InType &in);
 
  private:
   bool ValidationImpl() override;
