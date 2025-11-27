@@ -1,9 +1,9 @@
 #pragma once
 
-#include "golovanov_d_matrix_max_elem//common/include/common.hpp"
+#include "golovanov_d_bcast//common/include/common.hpp"
 #include "task/include/task.hpp"
 
-namespace golovanov_d_matrix_max_elem {
+namespace golovanov_d_bcast {
 
 class GolovanovDMatrixMaxElemSEQ : public BaseTask {
  public:
@@ -19,4 +19,4 @@ class GolovanovDMatrixMaxElemSEQ : public BaseTask {
   bool PostProcessingImpl() override;
 };
 
-}  // namespace golovanov_d_matrix_max_elem
+}  // namespace golovanov_d_bcast

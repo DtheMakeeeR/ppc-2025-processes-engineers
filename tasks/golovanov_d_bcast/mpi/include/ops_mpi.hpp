@@ -1,9 +1,10 @@
 #pragma once
 
-#include "golovanov_d_matrix_max_elem//common/include/common.hpp"
+#include "golovanov_d_bcast//common/include/common.hpp"
 #include "task/include/task.hpp"
+#include <mpi.h>
 
-namespace golovanov_d_matrix_max_elem {
+namespace golovanov_d_bcast {
 
 class GolovanovDMatrixMaxElemMPI : public BaseTask {
  public:
@@ -17,6 +18,8 @@ class GolovanovDMatrixMaxElemMPI : public BaseTask {
   bool PreProcessingImpl() override;
   bool RunImpl() override;
   bool PostProcessingImpl() override;
+  int MY_Bcast(void *buffer, int count, MPI_Datatype datatype,
+    int root, MPI_Comm comm)
 };
 
-}  // namespace golovanov_d_matrix_max_elem
+}  // namespace golovanov_d_bcast

@@ -1,13 +1,13 @@
 #include <gtest/gtest.h>
 
-#include "golovanov_d_matrix_max_elem//common/include/common.hpp"
-#include "golovanov_d_matrix_max_elem//mpi/include/ops_mpi.hpp"
-#include "golovanov_d_matrix_max_elem//seq/include/ops_seq.hpp"
+#include "golovanov_d_bcast//common/include/common.hpp"
+#include "golovanov_d_bcast//mpi/include/ops_mpi.hpp"
+#include "golovanov_d_bcast//seq/include/ops_seq.hpp"
 #include "util/include/perf_test_util.hpp"
 
-namespace golovanov_d_matrix_max_elem {
+namespace golovanov_d_bcast {
 
-class GolovanovDMatrixMaxElemPerfTest : public ppc::util::BaseRunPerfTests<InType, OutType> {
+class GolovanovDBcastPerfTest : public ppc::util::BaseRunPerfTests<InType, OutType> {
  private:
   InType input_data_{};
   double maximum = 100000;
@@ -39,17 +39,17 @@ class GolovanovDMatrixMaxElemPerfTest : public ppc::util::BaseRunPerfTests<InTyp
   }
 };
 
-TEST_P(GolovanovDMatrixMaxElemPerfTest, RunPerfModes) {
+TEST_P(GolovanovDBcastPerfTest, RunPerfModes) {
   ExecuteTest(GetParam());
 }
 
 const auto kAllPerfTasks = ppc::util::MakeAllPerfTasks<InType, GolovanovDMatrixMaxElemMPI, GolovanovDMatrixMaxElemSEQ>(
-    PPC_SETTINGS_golovanov_d_matrix_max_elem);
+    PPC_SETTINGS_golovanov_d_bcast);
 
 const auto kGtestValues = ppc::util::TupleToGTestValues(kAllPerfTasks);
 
-const auto kPerfTestName = GolovanovDMatrixMaxElemPerfTest::CustomPerfTestName;
+const auto kPerfTestName = GolovanovDBcastPerfTest::CustomPerfTestName;
 
-INSTANTIATE_TEST_SUITE_P(MatrixMaxElemPerTests, GolovanovDMatrixMaxElemPerfTest, kGtestValues, kPerfTestName);
+INSTANTIATE_TEST_SUITE_P(MatrixMaxElemPerTests, GolovanovDBcastPerfTest, kGtestValues, kPerfTestName);
 
-}  // namespace golovanov_d_matrix_max_elem
+}  // namespace golovanov_d_bcast

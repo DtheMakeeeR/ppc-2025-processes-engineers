@@ -1,12 +1,12 @@
-#include "golovanov_d_matrix_max_elem//seq/include/ops_seq.hpp"
+#include "golovanov_d_bcast//seq/include/ops_seq.hpp"
 
 #include <numeric>
 #include <vector>
 
-#include "golovanov_d_matrix_max_elem//common/include/common.hpp"
+#include "golovanov_d_bcast//common/include/common.hpp"
 #include "util/include/util.hpp"
 
-namespace golovanov_d_matrix_max_elem {
+namespace golovanov_d_bcast {
 
 GolovanovDMatrixMaxElemSEQ::GolovanovDMatrixMaxElemSEQ(const InType &in) {
   SetTypeOfTask(GetStaticTypeOfTask());
@@ -36,4 +36,4 @@ bool GolovanovDMatrixMaxElemSEQ::PostProcessingImpl() {
   return true;
 }
 
-}  // namespace golovanov_d_matrix_max_elem
+}  // namespace golovanov_d_bcast

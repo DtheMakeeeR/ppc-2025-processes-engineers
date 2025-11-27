@@ -12,15 +12,15 @@
 #include <utility>
 #include <vector>
 
-#include "golovanov_d_matrix_max_elem//common/include/common.hpp"
-#include "golovanov_d_matrix_max_elem//mpi/include/ops_mpi.hpp"
-#include "golovanov_d_matrix_max_elem//seq/include/ops_seq.hpp"
+#include "golovanov_d_bcast//common/include/common.hpp"
+#include "golovanov_d_bcast//mpi/include/ops_mpi.hpp"
+#include "golovanov_d_bcast//seq/include/ops_seq.hpp"
 #include "util/include/func_test_util.hpp"
 #include "util/include/util.hpp"
 
-namespace golovanov_d_matrix_max_elem {
+namespace golovanov_d_bcast {
 
-class GolovanovDMatrixMaxElemFuncTest : public ppc::util::BaseRunFuncTests<InType, OutType, TestType> {
+class GolovanovDBcastFuncTest : public ppc::util::BaseRunFuncTests<InType, OutType, TestType> {
  public:
   static std::string PrintTestParam(const TestType &test_param) {
     std::string s1 = std::to_string(std::get<0>(test_param)) + "_";
@@ -77,21 +77,21 @@ class GolovanovDMatrixMaxElemFuncTest : public ppc::util::BaseRunFuncTests<InTyp
 
 namespace {
 
-TEST_P(GolovanovDMatrixMaxElemFuncTest, TestTest1) {
+TEST_P(GolovanovDBcastFuncTest, TestTest1) {
   ExecuteTest(GetParam());
 }
 const std::array<TestType, 3> kTestParam = {TestType(5, 5, 10.0), TestType(5, 5, -10.0), TestType(5, 5, 0)};
 
 const auto kTestTasksList = std::tuple_cat(
-    ppc::util::AddFuncTask<GolovanovDMatrixMaxElemMPI, InType>(kTestParam, PPC_SETTINGS_golovanov_d_matrix_max_elem),
-    ppc::util::AddFuncTask<GolovanovDMatrixMaxElemSEQ, InType>(kTestParam, PPC_SETTINGS_golovanov_d_matrix_max_elem));
+    ppc::util::AddFuncTask<GolovanovDMatrixMaxElemMPI, InType>(kTestParam, PPC_SETTINGS_golovanov_d_bcast),
+    ppc::util::AddFuncTask<GolovanovDMatrixMaxElemSEQ, InType>(kTestParam, PPC_SETTINGS_golovanov_d_bcast));
 
 const auto kGtestValues = ppc::util::ExpandToValues(kTestTasksList);
 
-const auto kPerfTestName = GolovanovDMatrixMaxElemFuncTest::PrintFuncTestName<GolovanovDMatrixMaxElemFuncTest>;
+const auto kPerfTestName = GolovanovDBcastFuncTest::PrintFuncTestName<GolovanovDBcastFuncTest>;
 
-INSTANTIATE_TEST_SUITE_P(MatrixMaxElemFunTests, GolovanovDMatrixMaxElemFuncTest, kGtestValues, kPerfTestName);
+INSTANTIATE_TEST_SUITE_P(MatrixMaxElemFunTests, GolovanovDBcastFuncTest, kGtestValues, kPerfTestName);
 
 }  // namespace
 
-}  // namespace golovanov_d_matrix_max_elem
+}  // namespace golovanov_d_bcast
