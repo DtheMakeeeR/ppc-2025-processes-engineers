@@ -38,6 +38,6 @@ const auto kGtestValues = ppc::util::TupleToGTestValues(kAllPerfTasks);
 
 const auto kPerfTestName = GolovanovDBcastPerfTest::CustomPerfTestName;
 
-INSTANTIATE_TEST_SUITE_P(MatrixMaxElemPerTests, GolovanovDBcastPerfTest, kGtestValues, kPerfTestName);
+INSTANTIATE_TEST_SUITE_P(BcastPerfTests, GolovanovDBcastPerfTest, kGtestValues, kPerfTestName);
 
 }  // namespace golovanov_d_bcast

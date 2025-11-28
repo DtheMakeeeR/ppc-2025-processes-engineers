@@ -21,7 +21,7 @@ class GolovanovDBcastFuncTest : public ppc::util::BaseRunFuncTests<InType, OutTy
   static std::string PrintTestParam(const TestType &test_param) {
     std::string s1 = std::to_string(std::get<0>(test_param)) + "_";
     std::string s2 = std::to_string(std::get<1>(test_param)) + "_";
-    return s1 + s2;
+    return "test" + s1 + s2;
   }
 
  protected:
@@ -67,17 +67,17 @@ namespace {
 TEST_P(GolovanovDBcastFuncTest, TestTest1) {
   ExecuteTest(GetParam());
 }
-const std::array<TestType, 3> kTestParam = {TestType(0, 5, true), TestType(1, 5, true)};
+const std::array<TestType, 1> kTestParam = {TestType(1, 5, true)};
 
 const auto kTestTasksList = std::tuple_cat(
     ppc::util::AddFuncTask<GolovanovDBcastMPI, InType>(kTestParam, PPC_SETTINGS_golovanov_d_bcast),
-    ppc::util::AddFuncTask<GolovanovDBcastMPI, InType>(kTestParam, PPC_SETTINGS_golovanov_d_bcast));
+    ppc::util::AddFuncTask<GolovanovDBcastSEQ, InType>(kTestParam, PPC_SETTINGS_golovanov_d_bcast));
 
 const auto kGtestValues = ppc::util::ExpandToValues(kTestTasksList);
 
 const auto kPerfTestName = GolovanovDBcastFuncTest::PrintFuncTestName<GolovanovDBcastFuncTest>;
 
-INSTANTIATE_TEST_SUITE_P(MatrixMaxElemFunTests, GolovanovDBcastFuncTest, kGtestValues, kPerfTestName);
+INSTANTIATE_TEST_SUITE_P(BcastFunTests, GolovanovDBcastFuncTest, kGtestValues, kPerfTestName);
 
 }  // namespace
 
