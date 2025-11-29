@@ -42,7 +42,7 @@ class GolovanovDMatrixMaxElemFuncTest : public ppc::util::BaseRunFuncTests<InTyp
     int m = std::get<1>(params);
     maximum = std::get<2>(params);
 
-    std::uniform_real_distribution<double> real_dist(-1000, maximum);
+    std::uniform_real_distribution<double> real_dist(-1000000, maximum);
     std::uniform_int_distribution<int> int_dist(0, (n * m) - 1);
 
     for (int i = 0; i < n; i++) {
@@ -61,7 +61,6 @@ class GolovanovDMatrixMaxElemFuncTest : public ppc::util::BaseRunFuncTests<InTyp
   InType GetTestInputData() final {
     return input_data_;
   }
-  // ОБРАТИТЬ ВНИМАНИЕ
  private:
   InType input_data_;
 };
@@ -71,7 +70,7 @@ namespace {
 TEST_P(GolovanovDMatrixMaxElemFuncTest, TestTest1) {
   ExecuteTest(GetParam());
 }
-const std::array<TestType, 3> kTestParam = {TestType(5, 5, 10.0), TestType(5, 5, -10.0), TestType(5, 5, 0)};
+const std::array<TestType, 4> kTestParam = {TestType(5, 5, 10.0), TestType(5, 5, -10.0), TestType(5, 5, 0), TestType(1, 1, 100)};
 
 const auto kTestTasksList = std::tuple_cat(
     ppc::util::AddFuncTask<GolovanovDMatrixMaxElemMPI, InType>(kTestParam, PPC_SETTINGS_golovanov_d_matrix_max_elem),
