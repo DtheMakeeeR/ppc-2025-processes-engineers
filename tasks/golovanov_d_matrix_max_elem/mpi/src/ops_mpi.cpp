@@ -33,7 +33,7 @@ bool GolovanovDMatrixMaxElemMPI::RunImpl() {
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &processes);
   std::vector<double> elems;
-  double answer = -1234;
+  double answer = 0;
   if (rank == 0) {
     auto columns = std::get<0>(GetInput());
     auto strokes = std::get<1>(GetInput());
