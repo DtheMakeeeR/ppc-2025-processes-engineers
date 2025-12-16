@@ -18,7 +18,7 @@ GolovanovDBcastMPI::GolovanovDBcastMPI(const InType &in) {
 }
 
 bool GolovanovDBcastMPI::ValidationImpl() {
-  //int index = std::get<0>(GetInput());
+  int index = std::get<0>(GetInput());
   int n = std::get<1>(GetInput());
   size_t size = static_cast<size_t>(n);
   //std::cout << "Validation n: " << size << "size int: " << std::get<2>(GetInput()).size() << "\n" <<
@@ -42,7 +42,6 @@ bool GolovanovDBcastMPI::RunImpl() {
   int n = 0;
   if(rank == main_proc)
   {
-    std::cout << "proc " << rank << " is main " << "\n"; 
     n = std::get<1>(GetInput());
   }
   MY_Bcast(&n, 1, MPI_INT, main_proc, MPI_COMM_WORLD);
@@ -59,14 +58,7 @@ bool GolovanovDBcastMPI::RunImpl() {
   MY_Bcast(v_float.data(), n, MPI_FLOAT, main_proc, MPI_COMM_WORLD);
   MY_Bcast(v_double.data(), n, MPI_DOUBLE, main_proc, MPI_COMM_WORLD);
   
-  // for(int i = 0; i < n; i++)
-  // {
-  //   std::cout << "int" << "[" << i << "]  proc " <<  rank << ": " << v_int[i] << "\n";
-  //   std::cout << "float" << "[" << i << "]  proc " <<  rank << ": " << v_float[i] << "\n";
-  //   std::cout << "double" << "[" << i << "]  proc " <<  rank << ": " << v_double[i] << "\n"; 
-  // }
   GetOutput() = true;
-  std::cout << "proc " << rank << " exit task" << "\n";
   return true;
 }
 
@@ -77,7 +69,6 @@ int GolovanovDBcastMPI::MY_Bcast(void *buffer, int count, MPI_Datatype datatype,
     int root, MPI_Comm comm){
   int real_rank = 0;
   MPI_Comm_rank(comm, &real_rank);
-  std::cout << "proc " << real_rank << " enter Bcast" << "\n"; 
   int world_size;
   MPI_Comm_size(comm, &world_size);
   int local_rank = (real_rank - root + world_size) % world_size;
@@ -90,9 +81,7 @@ int GolovanovDBcastMPI::MY_Bcast(void *buffer, int count, MPI_Datatype datatype,
       rank_lvl = 1;
       int local_child = 1; 
       int real_child = (root + local_child) % world_size;
-      std::cout << "proc " << real_rank << " to " << real_child << "\n"; 
       MPI_Send(buffer, count, datatype, real_child, 0, comm);
-      std::cout << "proc " << real_rank << " sended to " << real_child << "\n"; 
     }
   }
   //не-корень получает впервые
@@ -102,22 +91,17 @@ int GolovanovDBcastMPI::MY_Bcast(void *buffer, int count, MPI_Datatype datatype,
     int parent_offset = static_cast<int>(pow(2, rank_lvl - 1));
     int local_parent = local_rank - parent_offset;
     int real_parent = (root + local_parent) % world_size;
-    std::cout << "proc " << real_rank << " from " << real_parent << "\n"; 
     MPI_Recv(buffer, count, datatype, real_parent, 0, comm, MPI_STATUS_IGNORE);
-    std::cout << "proc " << real_rank << " getted from " << real_parent << "\n"; 
   }
   //расслыка
   int local_child = local_rank + static_cast<int>(pow(2, rank_lvl));
   while(local_child < world_size)
   {
     int real_child = (root + local_child) % world_size;
-    std::cout << "proc " << real_rank << " to " << real_child << "\n"; 
     MPI_Send(buffer, count, datatype, real_child, 0, comm);
-    std::cout << "proc " << real_rank << " sended to " << real_child << "\n"; 
     rank_lvl++;
     local_child = local_rank + static_cast<int>(pow(2, rank_lvl));
   }
-  std::cout << "proc " << real_rank << " exit Bcast "<< "\n"; 
   return MPI_SUCCESS;
 }
 }  // namespace golovanov_d_bcast
