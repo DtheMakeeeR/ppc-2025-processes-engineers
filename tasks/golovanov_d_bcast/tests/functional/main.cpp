@@ -33,9 +33,9 @@ class GolovanovDBcastFuncTest : public ppc::util::BaseRunFuncTests<InType, OutTy
 
     int index = std::get<0>(params);
     int n = std::get<1>(params);
-    std::vector<int> v_int(n);
-    std::vector<float> v_float(n);
-    std::vector<double> v_double(n);
+    std::vector<int> v_int(0);
+    std::vector<float> v_float(0);
+    std::vector<double> v_double(0);
     result = std::get<2>(params);
 
     std::uniform_real_distribution<double> double_dist(-1000, 1000);
@@ -67,7 +67,7 @@ namespace {
 TEST_P(GolovanovDBcastFuncTest, TestTest1) {
   ExecuteTest(GetParam());
 }
-const std::array<TestType, 1> kTestParam = {TestType(1, 5, true)};
+const std::array<TestType, 2> kTestParam = {TestType(0, 5, true), TestType(1, 5, true)};
 
 const auto kTestTasksList = std::tuple_cat(
     ppc::util::AddFuncTask<GolovanovDBcastMPI, InType>(kTestParam, PPC_SETTINGS_golovanov_d_bcast),

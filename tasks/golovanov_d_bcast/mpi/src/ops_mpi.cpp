@@ -14,14 +14,21 @@ namespace golovanov_d_bcast {
 GolovanovDBcastMPI::GolovanovDBcastMPI(const InType &in) {
   SetTypeOfTask(GetStaticTypeOfTask());
   GetInput() = in;
-  GetOutput() = true;
+  GetOutput() = false;
 }
 
 bool GolovanovDBcastMPI::ValidationImpl() {
   //int index = std::get<0>(GetInput());
   int n = std::get<1>(GetInput());
-  return (n > -1) && ((std::get<2>(GetInput()).size() == std::get<3>(GetInput()).size()) == (std::get<4>(GetInput()).size() == static_cast<size_t>(n))) &&
-         (GetOutput() == true);
+  size_t size = static_cast<size_t>(n);
+  //std::cout << "Validation n: " << size << "size int: " << std::get<2>(GetInput()).size() << "\n" <<
+  //                                         "size float: " << std::get<3>(GetInput()).size() << "\n" <<
+  //                                         "size double: " << std::get<4>(GetInput()).size() << "\n" <<
+  //                                         "getotput: " << GetOutput() << "\n";
+  return ((n > -1) &&  (std::get<2>(GetInput()).size() == size) && 
+                      (std::get<3>(GetInput()).size() == size) &&
+                      (std::get<4>(GetInput()).size() == size) &&
+         (GetOutput() == false));
 }
 
 bool GolovanovDBcastMPI::PreProcessingImpl() {
@@ -38,7 +45,6 @@ bool GolovanovDBcastMPI::RunImpl() {
     std::cout << "proc " << rank << " is main " << "\n"; 
     n = std::get<1>(GetInput());
   }
-  std::cout << "proc " << rank << " is alive" << "\n"; 
   MY_Bcast(&n, 1, MPI_INT, main_proc, MPI_COMM_WORLD);
   std::vector<int> v_int(n);
   std::vector<float> v_float(n);
@@ -53,12 +59,12 @@ bool GolovanovDBcastMPI::RunImpl() {
   MY_Bcast(v_float.data(), n, MPI_FLOAT, main_proc, MPI_COMM_WORLD);
   MY_Bcast(v_double.data(), n, MPI_DOUBLE, main_proc, MPI_COMM_WORLD);
   
-  for(int i = 0; i < n; i++)
-  {
-    std::cout << "int proc " << rank << " [" << i << "]: " << v_int[i] << "\n";
-    std::cout << "float proc " << rank << " [" << i << "]: " << v_float[i] << "\n";
-    std::cout << "double proc " << rank << " [" << i << "]: " << v_double[i] << "\n"; 
-  }
+  // for(int i = 0; i < n; i++)
+  // {
+  //   std::cout << "int" << "[" << i << "]  proc " <<  rank << ": " << v_int[i] << "\n";
+  //   std::cout << "float" << "[" << i << "]  proc " <<  rank << ": " << v_float[i] << "\n";
+  //   std::cout << "double" << "[" << i << "]  proc " <<  rank << ": " << v_double[i] << "\n"; 
+  // }
   GetOutput() = true;
   std::cout << "proc " << rank << " exit task" << "\n";
   return true;
@@ -69,57 +75,49 @@ bool GolovanovDBcastMPI::PostProcessingImpl() {
 }
 int GolovanovDBcastMPI::MY_Bcast(void *buffer, int count, MPI_Datatype datatype,
     int root, MPI_Comm comm){
-  int rank_loc = 0;
-  MPI_Comm_rank(comm, &rank_loc);
-  std::cout << "proc " << rank_loc << " enter Bcast" << "\n"; 
+  int real_rank = 0;
+  MPI_Comm_rank(comm, &real_rank);
+  std::cout << "proc " << real_rank << " enter Bcast" << "\n"; 
   int world_size;
   MPI_Comm_size(comm, &world_size);
-  if(rank_loc == 0)
+  int local_rank = (real_rank - root + world_size) % world_size;
+  int rank_lvl = 0;
+  //корень отправляет первому
+  if(local_rank == 0)
   {
-    rank_loc = root;
-  }
-  else if(rank_loc == root)
-  {
-    rank_loc = 0;
-  }
-  int rank_lvl = 2;
-  if(rank_loc == 0)
-  {
-    std::cout << "proc " << rank_loc << " to " << 1 << "\n"; 
-    MPI_Send(buffer, count, datatype, 1, 0, comm);
-    std::cout << "proc " << rank_loc << " sended to " << 1 << "\n"; 
-  }
-  else if(rank_loc == 1)
-  {
-    std::cout << "proc " << rank_loc << " from " << 1 << "\n"; 
-    MPI_Recv(buffer, count, datatype, 0, 0, comm, MPI_STATUS_IGNORE);
-    std::cout << "proc " << rank_loc << " getted from " << 1 << "\n"; 
-  }
-  else
-  {
-    rank_lvl = static_cast<int>(floor(log2(rank_loc))) + 1;
-    int tmp = static_cast<int>(pow(2, rank_lvl - 1));
-    int rank_parent = rank_loc % tmp;
-    if(rank_parent == 0) 
+    if(world_size > 1)
     {
-      rank_parent = root;
+      rank_lvl = 1;
+      int local_child = 1; 
+      int real_child = (root + local_child) % world_size;
+      std::cout << "proc " << real_rank << " to " << real_child << "\n"; 
+      MPI_Send(buffer, count, datatype, real_child, 0, comm);
+      std::cout << "proc " << real_rank << " sended to " << real_child << "\n"; 
     }
-    else if(rank_parent == root)
-    {
-      rank_parent = 0;
-    }
-    std::cout << "proc " << rank_loc << " from " << rank_parent << "\n"; 
-    MPI_Recv(buffer, count, datatype, rank_parent, 0, comm, MPI_STATUS_IGNORE);
-    std::cout << "proc " << rank_loc << " getted from " << rank_parent << "\n"; 
-    rank_lvl = static_cast<int>(pow(2, rank_lvl));
   }
-  for(int i = rank_loc + rank_lvl; i < world_size; i*=2)
+  //не-корень получает впервые
+  else 
   {
-    std::cout << "proc " << rank_loc << " to " << i << "\n"; 
-    MPI_Send(buffer, count, datatype, i, 0, comm);
-    std::cout << "proc " << rank_loc << " sended to " << i << "\n"; 
+    rank_lvl = static_cast<int>(floor(log2(local_rank))) + 1;
+    int parent_offset = static_cast<int>(pow(2, rank_lvl - 1));
+    int local_parent = local_rank - parent_offset;
+    int real_parent = (root + local_parent) % world_size;
+    std::cout << "proc " << real_rank << " from " << real_parent << "\n"; 
+    MPI_Recv(buffer, count, datatype, real_parent, 0, comm, MPI_STATUS_IGNORE);
+    std::cout << "proc " << real_rank << " getted from " << real_parent << "\n"; 
   }
-  std::cout << "proc " << rank_loc << " exit Bcast "<< "\n"; 
+  //расслыка
+  int local_child = local_rank + static_cast<int>(pow(2, rank_lvl));
+  while(local_child < world_size)
+  {
+    int real_child = (root + local_child) % world_size;
+    std::cout << "proc " << real_rank << " to " << real_child << "\n"; 
+    MPI_Send(buffer, count, datatype, real_child, 0, comm);
+    std::cout << "proc " << real_rank << " sended to " << real_child << "\n"; 
+    rank_lvl++;
+    local_child = local_rank + static_cast<int>(pow(2, rank_lvl));
+  }
+  std::cout << "proc " << real_rank << " exit Bcast "<< "\n"; 
   return MPI_SUCCESS;
 }
 }  // namespace golovanov_d_bcast
