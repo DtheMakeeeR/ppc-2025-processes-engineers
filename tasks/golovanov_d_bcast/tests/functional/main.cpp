@@ -47,8 +47,9 @@ class GolovanovDBcastFuncTest : public ppc::util::BaseRunFuncTests<InType, OutTy
       v_float.push_back(float_dist(gen));
       v_double.push_back(double_dist(gen));
     }
-    
-    input_data_ = std::tuple<int, int, std::vector<int>, std::vector<float>, std::vector<double>>(index, n, v_int, v_float, v_double);
+
+    input_data_ = std::tuple<int, int, std::vector<int>, std::vector<float>, std::vector<double>>(index, n, v_int,
+                                                                                                  v_float, v_double);
   }
   bool CheckTestOutputData(OutType &output_data) final {
     return output_data == result;
@@ -57,6 +58,7 @@ class GolovanovDBcastFuncTest : public ppc::util::BaseRunFuncTests<InType, OutTy
   InType GetTestInputData() final {
     return input_data_;
   }
+
  private:
   InType input_data_;
 };
@@ -68,9 +70,9 @@ TEST_P(GolovanovDBcastFuncTest, TestTest1) {
 }
 const std::array<TestType, 2> kTestParam = {TestType(0, 5, true), TestType(1, 5, true)};
 
-const auto kTestTasksList = std::tuple_cat(
-    ppc::util::AddFuncTask<GolovanovDBcastMPI, InType>(kTestParam, PPC_SETTINGS_golovanov_d_bcast),
-    ppc::util::AddFuncTask<GolovanovDBcastSEQ, InType>(kTestParam, PPC_SETTINGS_golovanov_d_bcast));
+const auto kTestTasksList =
+    std::tuple_cat(ppc::util::AddFuncTask<GolovanovDBcastMPI, InType>(kTestParam, PPC_SETTINGS_golovanov_d_bcast),
+                   ppc::util::AddFuncTask<GolovanovDBcastSEQ, InType>(kTestParam, PPC_SETTINGS_golovanov_d_bcast));
 
 const auto kGtestValues = ppc::util::ExpandToValues(kTestTasksList);
 

@@ -17,18 +17,20 @@ class GolovanovDBcastPerfTest : public ppc::util::BaseRunPerfTests<InType, OutTy
     std::vector<int> v_int(0);
     std::vector<float> v_float(0);
     std::vector<double> v_double(0);
-    for(int i = 0; i < count_; i++)
-    {
+    for (int i = 0; i < count_; i++) {
       v_int.push_back(i);
       v_float.push_back(i);
       v_double.push_back(i);
     }
     int main_proc = 1;
-    input_data_ = std::tuple<int, int, std::vector<int>, std::vector<float>, std::vector<double>>(main_proc, count_, v_int, v_float, v_double);
+    input_data_ = std::tuple<int, int, std::vector<int>, std::vector<float>, std::vector<double>>(
+        main_proc, count_, v_int, v_float, v_double);
   }
 
   bool CheckTestOutputData(OutType &output_data) final {
-    if(output_data) return true;
+    if (output_data) {
+      return true;
+    }
     return false;
   }
 
@@ -41,8 +43,8 @@ TEST_P(GolovanovDBcastPerfTest, RunPerfModes) {
   ExecuteTest(GetParam());
 }
 
-const auto kAllPerfTasks = ppc::util::MakeAllPerfTasks<InType, GolovanovDBcastMPI, GolovanovDBcastSEQ>(
-    PPC_SETTINGS_golovanov_d_bcast);
+const auto kAllPerfTasks =
+    ppc::util::MakeAllPerfTasks<InType, GolovanovDBcastMPI, GolovanovDBcastSEQ>(PPC_SETTINGS_golovanov_d_bcast);
 
 const auto kGtestValues = ppc::util::TupleToGTestValues(kAllPerfTasks);
 

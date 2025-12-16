@@ -21,7 +21,7 @@ bool GolovanovDBcastSEQ::ValidationImpl() {
 bool GolovanovDBcastSEQ::PreProcessingImpl() {
   return true;
 }
-//заглушка
+// заглушка
 bool GolovanovDBcastSEQ::RunImpl() {
   GetOutput() = true;
   return true;
