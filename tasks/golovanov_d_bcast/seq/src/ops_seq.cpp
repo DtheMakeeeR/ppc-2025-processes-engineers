@@ -15,23 +15,13 @@ GolovanovDBcastSEQ::GolovanovDBcastSEQ(const InType &in) {
 }
 
 bool GolovanovDBcastSEQ::ValidationImpl() {
-  //int index = std::get<0>(GetInput());
-  int n = std::get<1>(GetInput());
-  size_t size = static_cast<size_t>(n);
-  std::cout << "Validation n: " << size << "size int: " << std::get<2>(GetInput()).size() << "\n" <<
-                                           "size float: " << std::get<3>(GetInput()).size() << "\n" <<
-                                           "size double: " << std::get<4>(GetInput()).size() << "\n" <<
-                                           "getotput: " << GetOutput() << "\n";
-  return ((n > -1) &&  (std::get<2>(GetInput()).size() == size) && 
-                      (std::get<3>(GetInput()).size() == size) &&
-                      (std::get<4>(GetInput()).size() == size) &&
-         (GetOutput() == false));
+  return true;
 }
 
 bool GolovanovDBcastSEQ::PreProcessingImpl() {
   return true;
 }
-
+//заглушка
 bool GolovanovDBcastSEQ::RunImpl() {
   GetOutput() = true;
   return true;

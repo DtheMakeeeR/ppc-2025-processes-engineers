@@ -19,15 +19,15 @@ GolovanovDBcastMPI::GolovanovDBcastMPI(const InType &in) {
 
 bool GolovanovDBcastMPI::ValidationImpl() {
   int index = std::get<0>(GetInput());
+  int world_size = 0;
+  MPI_Comm_size(MPI_COMM_WORLD, &world_size);
   int n = std::get<1>(GetInput());
+
   size_t size = static_cast<size_t>(n);
-  //std::cout << "Validation n: " << size << "size int: " << std::get<2>(GetInput()).size() << "\n" <<
-  //                                         "size float: " << std::get<3>(GetInput()).size() << "\n" <<
-  //                                         "size double: " << std::get<4>(GetInput()).size() << "\n" <<
-  //                                         "getotput: " << GetOutput() << "\n";
   return ((n > -1) &&  (std::get<2>(GetInput()).size() == size) && 
                       (std::get<3>(GetInput()).size() == size) &&
                       (std::get<4>(GetInput()).size() == size) &&
+                      (index < world_size && index >=0) &&
          (GetOutput() == false));
 }
 

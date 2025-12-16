@@ -57,7 +57,6 @@ class GolovanovDBcastFuncTest : public ppc::util::BaseRunFuncTests<InType, OutTy
   InType GetTestInputData() final {
     return input_data_;
   }
-  // ОБРАТИТЬ ВНИМАНИЕ
  private:
   InType input_data_;
 };
