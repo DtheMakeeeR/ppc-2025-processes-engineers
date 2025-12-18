@@ -17,17 +17,19 @@ GolovanovDBcastMPI::GolovanovDBcastMPI(const InType &in) {
 }
 
 bool GolovanovDBcastMPI::ValidationImpl() {
-  int index = std::get<0>(GetInput());
-  int world_size = 0;
-  MPI_Comm_size(MPI_COMM_WORLD, &world_size);
   int n = std::get<1>(GetInput());
-
   size_t size = static_cast<size_t>(n);
   return ((n > -1) && (std::get<2>(GetInput()).size() == size) && (std::get<3>(GetInput()).size() == size) &&
-          (std::get<4>(GetInput()).size() == size) && (index < world_size && index >= 0) && (GetOutput() == false));
+          (std::get<4>(GetInput()).size() == size) && (GetOutput() == false));
 }
 
 bool GolovanovDBcastMPI::PreProcessingImpl() {
+  int &index = std::get<0>(GetInput());
+  int world_size = 0;
+  MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+  if (index >= world_size || index < 0) {
+    index = 0;
+  }
   return true;
 }
 

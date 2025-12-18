@@ -68,7 +68,7 @@ namespace {
 TEST_P(GolovanovDBcastFuncTest, TestTest1) {
   ExecuteTest(GetParam());
 }
-const std::array<TestType, 1> kTestParam = {TestType(0, 5, true)};
+const std::array<TestType, 2> kTestParam = {TestType(0, 5, true), TestType(1, 5, true)};
 
 const auto kTestTasksList =
     std::tuple_cat(ppc::util::AddFuncTask<GolovanovDBcastMPI, InType>(kTestParam, PPC_SETTINGS_golovanov_d_bcast),
