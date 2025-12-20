@@ -19,7 +19,7 @@ class GolovanovDBcastMPI : public BaseTask {
   bool PreProcessingImpl() override;
   bool RunImpl() override;
   bool PostProcessingImpl() override;
-  int MY_Bcast(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm);
+  int MyBcast(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm);
 };
 
 }  // namespace golovanov_d_bcast
