@@ -1,4 +1,4 @@
-#include "golovanov_d_bcast//mpi/include/ops_mpi.hpp"
+#include "golovanov_d_bcast/mpi/include/ops_mpi.hpp"
 
 #include <mpi.h>
 
@@ -6,7 +6,7 @@
 #include <cstdio>
 #include <vector>
 
-#include "golovanov_d_bcast//common/include/common.hpp"
+#include "golovanov_d_bcast/common/include/common.hpp"
 
 namespace golovanov_d_bcast {
 

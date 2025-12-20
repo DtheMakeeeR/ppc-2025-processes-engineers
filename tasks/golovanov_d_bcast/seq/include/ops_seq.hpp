@@ -1,6 +1,6 @@
 #pragma once
 
-#include "golovanov_d_bcast//common/include/common.hpp"
+#include "golovanov_d_bcast/common/include/common.hpp"
 #include "task/include/task.hpp"
 
 namespace golovanov_d_bcast {
