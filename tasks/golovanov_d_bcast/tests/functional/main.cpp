@@ -25,7 +25,7 @@ class GolovanovDBcastFuncTest : public ppc::util::BaseRunFuncTests<InType, OutTy
   }
 
  protected:
-  bool result;
+  bool result = false;
   std::mt19937 gen{std::random_device{}()};
 
   void SetUp() override {
