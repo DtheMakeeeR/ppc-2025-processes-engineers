@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include <vector>
+#include <tuple>
 #include "golovanov_d_bcast//common/include/common.hpp"
 #include "golovanov_d_bcast//mpi/include/ops_mpi.hpp"
 #include "golovanov_d_bcast//seq/include/ops_seq.hpp"
@@ -19,8 +21,8 @@ class GolovanovDBcastPerfTest : public ppc::util::BaseRunPerfTests<InType, OutTy
     std::vector<double> v_double(0);
     for (int i = 0; i < count_; i++) {
       v_int.push_back(i);
-      v_float.push_back(i);
-      v_double.push_back(i);
+      v_float.push_back(static_cast<float>(i));
+      v_double.push_back(static_cast<double>(i));
     }
     int main_proc = 1;
     input_data_ = std::tuple<int, int, std::vector<int>, std::vector<float>, std::vector<double>>(
@@ -28,10 +30,7 @@ class GolovanovDBcastPerfTest : public ppc::util::BaseRunPerfTests<InType, OutTy
   }
 
   bool CheckTestOutputData(OutType &output_data) final {
-    if (output_data) {
-      return true;
-    }
-    return false;
+    return output_data;
   }
 
   InType GetTestInputData() final {
