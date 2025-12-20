@@ -4,7 +4,6 @@
 
 #include <cmath>
 #include <cstdio>
-
 #include <vector>
 
 #include "golovanov_d_bcast//common/include/common.hpp"
