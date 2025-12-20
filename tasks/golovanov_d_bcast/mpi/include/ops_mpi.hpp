@@ -1,6 +1,5 @@
 #pragma once
 
-#include <mpi.h>
 
 #include "golovanov_d_bcast//common/include/common.hpp"
 #include "task/include/task.hpp"
@@ -19,7 +18,7 @@ class GolovanovDBcastMPI : public BaseTask {
   bool PreProcessingImpl() override;
   bool RunImpl() override;
   bool PostProcessingImpl() override;
-  int MyBcast(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm);
+  static int MyBcast(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm);
 };
 
 }  // namespace golovanov_d_bcast

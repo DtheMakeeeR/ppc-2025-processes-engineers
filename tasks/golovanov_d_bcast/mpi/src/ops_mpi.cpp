@@ -1,9 +1,10 @@
 #include "golovanov_d_bcast//mpi/include/ops_mpi.hpp"
 
-#include <math.h>
-#include <stdio.h>
+#include <mpi.h>
 
-#include <iostream>
+#include <cmath>
+#include <cstdio>
+
 #include <vector>
 
 #include "golovanov_d_bcast//common/include/common.hpp"
@@ -18,9 +19,9 @@ GolovanovDBcastMPI::GolovanovDBcastMPI(const InType &in) {
 
 bool GolovanovDBcastMPI::ValidationImpl() {
   int n = std::get<1>(GetInput());
-  size_t size = static_cast<size_t>(n);
+  auto size = static_cast<size_t>(n);
   return ((n > -1) && (std::get<2>(GetInput()).size() == size) && (std::get<3>(GetInput()).size() == size) &&
-          (std::get<4>(GetInput()).size() == size) && (GetOutput() == false));
+          (std::get<4>(GetInput()).size() == size) && !GetOutput());
 }
 
 bool GolovanovDBcastMPI::PreProcessingImpl() {
@@ -41,7 +42,7 @@ bool GolovanovDBcastMPI::RunImpl() {
   if (rank == main_proc) {
     n = std::get<1>(GetInput());
   }
-  MY_Bcast(&n, 1, MPI_INT, main_proc, MPI_COMM_WORLD);
+  MyBcast(&n, 1, MPI_INT, main_proc, MPI_COMM_WORLD);
   std::vector<int> v_int(n);
   std::vector<float> v_float(n);
   std::vector<double> v_double(n);
@@ -50,9 +51,9 @@ bool GolovanovDBcastMPI::RunImpl() {
     v_float = std::get<3>(GetInput());
     v_double = std::get<4>(GetInput());
   }
-  MY_Bcast(v_int.data(), n, MPI_INT, main_proc, MPI_COMM_WORLD);
-  MY_Bcast(v_float.data(), n, MPI_FLOAT, main_proc, MPI_COMM_WORLD);
-  MY_Bcast(v_double.data(), n, MPI_DOUBLE, main_proc, MPI_COMM_WORLD);
+  MyBcast(v_int.data(), n, MPI_INT, main_proc, MPI_COMM_WORLD);
+  MyBcast(v_float.data(), n, MPI_FLOAT, main_proc, MPI_COMM_WORLD);
+  MyBcast(v_double.data(), n, MPI_DOUBLE, main_proc, MPI_COMM_WORLD);
 
   GetOutput() = true;
   return true;
@@ -61,10 +62,10 @@ bool GolovanovDBcastMPI::RunImpl() {
 bool GolovanovDBcastMPI::PostProcessingImpl() {
   return true;
 }
-int GolovanovDBcastMPI::MY_Bcast(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm) {
+static int GolovanovDBcastMPI::MyBcast(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm) {
   int real_rank = 0;
   MPI_Comm_rank(comm, &real_rank);
-  int world_size;
+  int world_size = 0;
   MPI_Comm_size(comm, &world_size);
   int local_rank = (real_rank - root + world_size) % world_size;
   int rank_lvl = 0;
