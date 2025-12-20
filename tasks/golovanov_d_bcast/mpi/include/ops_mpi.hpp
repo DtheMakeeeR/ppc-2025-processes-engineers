@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "golovanov_d_bcast//common/include/common.hpp"
 #include "task/include/task.hpp"
 

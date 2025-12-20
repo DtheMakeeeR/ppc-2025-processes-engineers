@@ -1,7 +1,8 @@
 #include <gtest/gtest.h>
 
-#include <vector>
 #include <tuple>
+#include <vector>
+
 #include "golovanov_d_bcast//common/include/common.hpp"
 #include "golovanov_d_bcast//mpi/include/ops_mpi.hpp"
 #include "golovanov_d_bcast//seq/include/ops_seq.hpp"

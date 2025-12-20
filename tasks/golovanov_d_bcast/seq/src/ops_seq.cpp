@@ -1,8 +1,7 @@
 #include "golovanov_d_bcast//seq/include/ops_seq.hpp"
 
-
 #include "golovanov_d_bcast//common/include/common.hpp"
-//#include "util/include/util.hpp" clang-tidy попросил отключить
+// #include "util/include/util.hpp" clang-tidy попросил отключить
 
 namespace golovanov_d_bcast {
 
