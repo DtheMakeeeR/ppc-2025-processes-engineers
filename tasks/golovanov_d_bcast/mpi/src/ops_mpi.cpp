@@ -9,8 +9,6 @@
 #include "golovanov_d_bcast/common/include/common.hpp"
 
 namespace golovanov_d_bcast {
-static int MyBcast(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm) {
-  int real_rank = 0;
   MPI_Comm_rank(comm, &real_rank);
   int world_size = 0;
   MPI_Comm_size(comm, &world_size);
@@ -94,5 +92,8 @@ bool GolovanovDBcastMPI::RunImpl() {
 bool GolovanovDBcastMPI::PostProcessingImpl() {
   return true;
 }
+
+static int GolovanovDBcastMPI::MyBcast(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm) {
+  int real_rank = 0;
 
 }  // namespace golovanov_d_bcast
