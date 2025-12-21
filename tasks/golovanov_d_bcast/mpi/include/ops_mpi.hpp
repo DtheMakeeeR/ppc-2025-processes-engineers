@@ -1,8 +1,9 @@
 #pragma once
 
+#include <mpi.h>
+
 #include "golovanov_d_bcast/common/include/common.hpp"
 #include "task/include/task.hpp"
-#include <mpi.h>
 namespace golovanov_d_bcast {
 
 class GolovanovDBcastMPI : public BaseTask {
