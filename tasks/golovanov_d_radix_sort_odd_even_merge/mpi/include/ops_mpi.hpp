@@ -1,0 +1,30 @@
+#pragma once
+
+#include <mpi.h>
+#include <vector>
+
+#include "golovanov_d_radix_sort_odd_even_merge/common/include/common.hpp"
+#include "task/include/task.hpp"
+namespace golovanov_d_radix_sort_odd_even_merge {
+
+class GolovanovDRadixSortOddEvenMergeMPI : public BaseTask {
+ public:
+  static constexpr ppc::task::TypeOfTask GetStaticTypeOfTask() {
+    return ppc::task::TypeOfTask::kMPI;
+  }
+  explicit GolovanovDRadixSortOddEvenMergeMPI(const InType &in);
+
+ private:
+  bool ValidationImpl() override;
+  bool PreProcessingImpl() override;
+  bool RunImpl() override;
+  bool PostProcessingImpl() override;
+  static int MyBcast(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm);
+  //radix sort
+  static int getDigit(int num, int digitPlace);
+  static void countingSort(std::vector<int>& arr, int digitPlace);
+  static void radixSort(std::vector<int>& arr);
+  static void radixSortWithNegatives(std::vector<int>& arr);
+};
+
+}  // namespace golovanov_d_radix_sort_odd_even_merge
