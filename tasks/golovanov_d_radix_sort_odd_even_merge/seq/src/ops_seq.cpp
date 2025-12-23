@@ -19,7 +19,9 @@ bool GolovanovDRadixSortOddEvenMergeSEQ::PreProcessingImpl() {
   return true;
 }
 bool GolovanovDRadixSortOddEvenMergeSEQ::RunImpl() {
-  GetOutput() = true;
+  std::vector<int> working_vector = GetInput();
+  radixSortWithNegatives(working_vector);
+  GetOutput() = working_vector;
   return true;
 }
 
