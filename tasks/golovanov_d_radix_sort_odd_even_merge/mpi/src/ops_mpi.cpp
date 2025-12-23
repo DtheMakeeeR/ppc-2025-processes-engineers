@@ -62,9 +62,7 @@ bool GolovanovDRadixSortOddEvenMergeMPI::PostProcessingImpl() {
   return true;
 }
 
-int GolovanovDRadixSortOddEvenMergeMPI::MyBcast(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm) {
- 
-}
+//radix sort
 
 int GolovanovDRadixSortOddEvenMergeMPI::getDigit(int num, int digitPlace) {
     return (num / digitPlace) % 10;

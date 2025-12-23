@@ -19,7 +19,6 @@ class GolovanovDRadixSortOddEvenMergeMPI : public BaseTask {
   bool PreProcessingImpl() override;
   bool RunImpl() override;
   bool PostProcessingImpl() override;
-  static int MyBcast(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm);
   //radix sort
   static int getDigit(int num, int digitPlace);
   static void countingSort(std::vector<int>& arr, int digitPlace);
