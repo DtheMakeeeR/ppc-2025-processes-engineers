@@ -28,15 +28,15 @@ class GolovanovDRadixSortOddEvenMergeFuncTest : public ppc::util::BaseRunFuncTes
 
   void SetUp() override {
     TestType params = std::get<static_cast<std::size_t>(ppc::util::GTestParamIndex::kTestParams)>(GetParam());
-    v_int = std::vector(std::get<1>(params));
+    res_ = std::vector(std::get<1>(params));
 
     //std::uniform_int_distribution<int> int_dist(-1000, 1000);
     //v_int.push_back(int_dist(gen));
 
-    std::sort(v_int.begin(), v_int.end());
+    std::sort(res_.begin(), res_.end());
   }
   bool CheckTestOutputData(OutType &output_data) final {
-    return output_data == v_int;
+    return output_data == res_;
   }
 
   InType GetTestInputData() final {
@@ -45,7 +45,7 @@ class GolovanovDRadixSortOddEvenMergeFuncTest : public ppc::util::BaseRunFuncTes
 
  private:
   InType input_data_;
-  std::vector<int> v_int;
+  std::vector<int> res_;
 };
 
 namespace {

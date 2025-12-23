@@ -13,21 +13,18 @@ namespace golovanov_d_radix_sort_odd_even_merge {
 class GolovanovDRadixSortOddEvenMergePerfTest : public ppc::util::BaseRunPerfTests<InType, OutType> {
  private:
   InType input_data_;
+  std::vector<int> res_;
   double count_ = 1000000;
 
  public:
   void SetUp() override {
     std::vector<int> v_int(0);
-    std::vector<float> v_float(0);
-    std::vector<double> v_double(0);
-    for (int i = 0; i < count_; i++) {
+    for (int i = count_; i >= 0; i--) {
       v_int.push_back(i);
-      v_float.push_back(static_cast<float>(i));
-      v_double.push_back(static_cast<double>(i));
     }
-    int main_proc = 1;
-    input_data_ = std::tuple<int, int, std::vector<int>, std::vector<float>, std::vector<double>>(
-        main_proc, count_, v_int, v_float, v_double);
+    res_ = v_int;
+    std::sort(res_.begin(), res_.end());
+    input_data_ = v_int;
   }
 
   bool CheckTestOutputData(OutType &output_data) final {
