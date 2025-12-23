@@ -36,7 +36,7 @@ int GolovanovDRadixSortOddEvenMergeSEQ::getDigit(int num, int digitPlace) {
 }
 
 void GolovanovDRadixSortOddEvenMergeSEQ::countingSort(std::vector<int>& arr, int digitPlace) {
-    int n = arr.size();
+    int n = static_cast<int>(arr.size());
     const int range = 10; 
     std::vector<int> output(n);
     std::vector<int> count(range, 0);
@@ -65,7 +65,7 @@ void GolovanovDRadixSortOddEvenMergeSEQ::radixSort(std::vector<int>& arr) {
     if (arr.empty()) return;
     
     int maxNum = arr[0];
-    for (int i = 1; i < arr.size(); i++) {
+    for (size_t i = 1; i < arr.size(); i++) {
         if (arr[i] > maxNum) {
             maxNum = arr[i];
         }
@@ -82,7 +82,7 @@ void GolovanovDRadixSortOddEvenMergeSEQ::radixSortWithNegatives(std::vector<int>
     std::vector<int> negatives;
     std::vector<int> nonNegatives;
     
-    for (int i = 0; i < arr.size(); i++) {
+    for (size_t i = 0; i < arr.size(); i++) {
         if (arr[i] < 0) {
             negatives.push_back(-arr[i]);
         } else {
@@ -93,21 +93,22 @@ void GolovanovDRadixSortOddEvenMergeSEQ::radixSortWithNegatives(std::vector<int>
     radixSort(negatives);
     radixSort(nonNegatives);
     
-    for (int i = 0; i < negatives.size() / 2; i++) {
+    for (size_t i = 0; i < negatives.size() / 2; i++) {
         int temp = negatives[i];
         negatives[i] = negatives[negatives.size() - 1 - i];
         negatives[negatives.size() - 1 - i] = temp;
     }
     
-    for (int i = 0; i < negatives.size(); i++) {
+    
+    for (size_t i = 0; i < negatives.size(); i++) {
         negatives[i] = -negatives[i];
     }
     
     arr.clear();
-    for (int i = 0; i < negatives.size(); i++) {
+    for (size_t i = 0; i < negatives.size(); i++) {
         arr.push_back(negatives[i]);
     }
-    for (int i = 0; i < nonNegatives.size(); i++) {
+    for (size_t i = 0; i < nonNegatives.size(); i++) {
         arr.push_back(nonNegatives[i]);
     }
 }

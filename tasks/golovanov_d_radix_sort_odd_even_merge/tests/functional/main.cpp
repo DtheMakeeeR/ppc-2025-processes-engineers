@@ -53,8 +53,10 @@ namespace {
 TEST_P(GolovanovDRadixSortOddEvenMergeFuncTest, TestTest1) {
   ExecuteTest(GetParam());
 }
-const std::array<TestType, 2> kTestParam = {TestType("some test", std::vector<double>{1.1, -2.0, 13.4, -65.0}), TestType("another test", std::vector<double>{1.001, -2.0004, -31.504, 4.0})};
-
+const std::array<TestType, 2> kTestParam = {
+    std::make_tuple("some test", std::vector<int>{1, -2, 13, -65}),
+    std::make_tuple("another test", std::vector<int>{1, -2, -31, 4})
+};
 const auto kTestTasksList =
     std::tuple_cat(ppc::util::AddFuncTask<GolovanovDRadixSortOddEvenMergeMPI, InType>(kTestParam, PPC_SETTINGS_golovanov_d_radix_sort_odd_even_merge),
                    ppc::util::AddFuncTask<GolovanovDRadixSortOddEvenMergeSEQ, InType>(kTestParam, PPC_SETTINGS_golovanov_d_radix_sort_odd_even_merge));
