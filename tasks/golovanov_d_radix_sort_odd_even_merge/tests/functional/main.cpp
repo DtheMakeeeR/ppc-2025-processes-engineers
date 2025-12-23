@@ -19,40 +19,24 @@ namespace golovanov_d_radix_sort_odd_even_merge {
 class GolovanovDRadixSortOddEvenMergeFuncTest : public ppc::util::BaseRunFuncTests<InType, OutType, TestType> {
  public:
   static std::string PrintTestParam(const TestType &test_param) {
-    std::string s1 = std::to_string(std::get<0>(test_param)) + "_";
-    std::string s2 = std::to_string(std::get<1>(test_param)) + "_";
-    return "test" + s1 + s2;
+    std::string s1 = std::get<0>(test_param);
+    return s1;
   }
 
  protected:
-  bool result = false;
-  std::mt19937 gen{std::random_device{}()};
+  //std::mt19937 gen{std::random_device{}()};
 
   void SetUp() override {
     TestType params = std::get<static_cast<std::size_t>(ppc::util::GTestParamIndex::kTestParams)>(GetParam());
+    v_int = std::vector(std::get<1>(params));
 
-    int index = std::get<0>(params);
-    int n = std::get<1>(params);
-    std::vector<int> v_int(0);
-    std::vector<float> v_float(0);
-    std::vector<double> v_double(0);
-    result = std::get<2>(params);
+    //std::uniform_int_distribution<int> int_dist(-1000, 1000);
+    //v_int.push_back(int_dist(gen));
 
-    std::uniform_real_distribution<double> double_dist(-1000, 1000);
-    std::uniform_real_distribution<float> float_dist(-1000, 1000);
-    std::uniform_int_distribution<int> int_dist(-1000, 1000);
-
-    for (int i = 0; i < n; i++) {
-      v_int.push_back(int_dist(gen));
-      v_float.push_back(float_dist(gen));
-      v_double.push_back(double_dist(gen));
-    }
-
-    input_data_ = std::tuple<int, int, std::vector<int>, std::vector<float>, std::vector<double>>(index, n, v_int,
-                                                                                                  v_float, v_double);
+    std::sort(v_int.begin(), v_int.end());
   }
   bool CheckTestOutputData(OutType &output_data) final {
-    return output_data == result;
+    return output_data == v_int;
   }
 
   InType GetTestInputData() final {
@@ -61,6 +45,7 @@ class GolovanovDRadixSortOddEvenMergeFuncTest : public ppc::util::BaseRunFuncTes
 
  private:
   InType input_data_;
+  std::vector<int> v_int;
 };
 
 namespace {
@@ -68,7 +53,7 @@ namespace {
 TEST_P(GolovanovDRadixSortOddEvenMergeFuncTest, TestTest1) {
   ExecuteTest(GetParam());
 }
-const std::array<TestType, 2> kTestParam = {TestType(0, 15, true), TestType(1, 15, true)};
+const std::array<TestType, 2> kTestParam = {TestType("some test", std::vector<double>{1.1, -2.0, 13.4, -65.0}), TestType("another test", std::vector<double>{1.001, -2.0004, -31.504, 4.0})};
 
 const auto kTestTasksList =
     std::tuple_cat(ppc::util::AddFuncTask<GolovanovDRadixSortOddEvenMergeMPI, InType>(kTestParam, PPC_SETTINGS_golovanov_d_radix_sort_odd_even_merge),

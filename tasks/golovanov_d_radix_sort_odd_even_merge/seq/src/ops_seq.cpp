@@ -8,7 +8,7 @@ namespace golovanov_d_radix_sort_odd_even_merge {
 GolovanovDRadixSortOddEvenMergeSEQ::GolovanovDRadixSortOddEvenMergeSEQ(const InType &in) {
   SetTypeOfTask(GetStaticTypeOfTask());
   GetInput() = in;
-  GetOutput() = false;
+  GetOutput() = std::vector<int>();
 }
 
 bool GolovanovDRadixSortOddEvenMergeSEQ::ValidationImpl() {
