@@ -18,8 +18,7 @@ class GolovanovDRadixSortOddEvenMergePerfTest : public ppc::util::BaseRunPerfTes
 
  public:
   void SetUp() override {
-    std::vector<int> v_int;
-    v_int.reserve(static_cast<size_t>(count_));
+    std::vector<int> v_int(0);
 
     for (int i = count_ - 1; i >= 0; i--) {
       v_int.push_back(i);
