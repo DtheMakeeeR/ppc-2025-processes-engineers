@@ -17,14 +17,16 @@ class GolovanovDRadixSortOddEvenMergePerfTest : public ppc::util::BaseRunPerfTes
 
  public:
   void SetUp() override {
-    std::vector<int> v_int(count_);
-    int index = 0;
-    for (int i = count_; i > 0; i--) {
-      v_int[index] = i;
-      index++;
+    std::vector<int> v_int;
+    v_int.reserve(count_);
+
+    for (int i = count_ - 1; i >= 0; i--) {
+      v_int.push_back(i);
     }
+
     res_ = v_int;
     std::sort(res_.begin(), res_.end());
+
     input_data_ = v_int;
   }
 
