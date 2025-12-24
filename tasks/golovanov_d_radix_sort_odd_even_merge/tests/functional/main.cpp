@@ -1,10 +1,9 @@
 #include <gtest/gtest.h>
 #include <stb/stb_image.h>
 
+#include <algorithm>
 #include <array>
 #include <cstddef>
-#include <iostream>
-#include <random>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -29,7 +28,7 @@ class GolovanovDRadixSortOddEvenMergeFuncTest : public ppc::util::BaseRunFuncTes
     TestType params = std::get<static_cast<std::size_t>(ppc::util::GTestParamIndex::kTestParams)>(GetParam());
     res_ = std::vector(std::get<1>(params));
     input_data_ = res_;
-    std::sort(res_.begin(), res_.end());
+    std::ranges::sort(res_.begin(), res_.end());
   }
   bool CheckTestOutputData(OutType &output_data) final {
     return output_data == res_;

@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <climits>
+#include <cstddef>
 #include <cstdio>
 #include <utility>
 #include <vector>
@@ -27,7 +28,8 @@ bool GolovanovDRadixSortOddEvenMergeMPI::PreProcessingImpl() {
 }
 
 bool GolovanovDRadixSortOddEvenMergeMPI::RunImpl() {
-  int rank, world_size;
+  int rank = 0;
+  int world_size = 0;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
@@ -56,7 +58,7 @@ bool GolovanovDRadixSortOddEvenMergeMPI::RunImpl() {
     comparators = GenerateBatcherComparators(world_size);
   }
 
-  int comparators_count = 0;
+  size_t comparators_count = 0;
   if (rank == 0) {
     comparators_count = comparators.size();
   }
@@ -70,16 +72,16 @@ bool GolovanovDRadixSortOddEvenMergeMPI::RunImpl() {
   std::vector<int> flat_comparators(comparators_count * 2);
 
   if (rank == 0) {
-    for (int i = 0; i < comparators_count; i++) {
+    for (size_t i = 0; i < comparators_count; i++) {
       flat_comparators[2 * i] = comparators[i].first;
-      flat_comparators[2 * i + 1] = comparators[i].second;
+      flat_comparators[(2 * i) + 1] = comparators[i].second;
     }
   }
 
   MPI_Bcast(flat_comparators.data(), comparators_count * 2, MPI_INT, 0, MPI_COMM_WORLD);
 
-  for (int i = 0; i < comparators_count; i++) {
-    comparators[i] = {flat_comparators[2 * i], flat_comparators[2 * i + 1]};
+  for (size_t i = 0; i < comparators_count; i++) {
+    comparators[i] = {flat_comparators[2 * i], flat_comparators[(2 * i) + 1]};
   }
 
   std::vector<int> local_data(local_size);
@@ -88,30 +90,7 @@ bool GolovanovDRadixSortOddEvenMergeMPI::RunImpl() {
 
   RadixSortWithNegatives(local_data);
 
-  std::vector<int> received_data(local_size);
-  std::vector<int> temp_data(local_size);
-
-  for (const auto &comparator : comparators) {
-    int a = comparator.first;
-    int b = comparator.second;
-
-    if (rank == a || rank == b) {
-      int partner = (rank == a) ? b : a;
-
-      MPI_Sendrecv(local_data.data(), local_size, MPI_INT, partner, 0, received_data.data(), local_size, MPI_INT,
-                   partner, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-
-      std::vector<int> merged = MergeTwoSorted(local_data, received_data);
-
-      if (rank == std::min(a, b)) {
-        std::copy(merged.begin(), merged.begin() + local_size, temp_data.begin());
-      } else {
-        std::copy(merged.begin() + local_size, merged.end(), temp_data.begin());
-      }
-
-      local_data = temp_data;
-    }
-  }
+  BatcherMerge(comparators, rank, local_data);
 
   std::vector<int> sorted_data;
 
@@ -136,18 +115,18 @@ bool GolovanovDRadixSortOddEvenMergeMPI::PostProcessingImpl() {
 
 // radix sort
 
-int GolovanovDRadixSortOddEvenMergeMPI::GetDigit(int num, int digitPlace) {
-  return (num / digitPlace) % 10;
+int GolovanovDRadixSortOddEvenMergeMPI::GetDigit(int num, int digit_place) {
+  return (num / digit_place) % 10;
 }
 
-void GolovanovDRadixSortOddEvenMergeMPI::CountingSort(std::vector<int> &arr, int digitPlace) {
+void GolovanovDRadixSortOddEvenMergeMPI::CountingSort(std::vector<int> &arr, int digit_place) {
   int n = static_cast<int>(arr.size());
   const int range = 10;
   std::vector<int> output(n);
   std::vector<int> count(range, 0);
 
   for (int i = 0; i < n; i++) {
-    int digit = GetDigit(arr[i], digitPlace);
+    int digit = GetDigit(arr[i], digit_place);
     count[digit]++;
   }
 
@@ -156,7 +135,7 @@ void GolovanovDRadixSortOddEvenMergeMPI::CountingSort(std::vector<int> &arr, int
   }
 
   for (int i = n - 1; i >= 0; i--) {
-    int digit = GetDigit(arr[i], digitPlace);
+    int digit = GetDigit(arr[i], digit_place);
     output[count[digit] - 1] = arr[i];
     count[digit]--;
   }
@@ -171,15 +150,10 @@ void GolovanovDRadixSortOddEvenMergeMPI::RadixSort(std::vector<int> &arr) {
     return;
   }
 
-  int maxNum = arr[0];
-  for (size_t i = 1; i < arr.size(); i++) {
-    if (arr[i] > maxNum) {
-      maxNum = arr[i];
-    }
-  }
+  int max_num = *std::ranges::max_element(arr);
 
-  for (int digitPlace = 1; maxNum / digitPlace > 0; digitPlace *= 10) {
-    CountingSort(arr, digitPlace);
+  for (int digit_place = 1; max_num / digit_place > 0; digit_place *= 10) {
+    CountingSort(arr, digit_place);
   }
 }
 
@@ -189,18 +163,18 @@ void GolovanovDRadixSortOddEvenMergeMPI::RadixSortWithNegatives(std::vector<int>
   }
 
   std::vector<int> negatives;
-  std::vector<int> nonNegatives;
+  std::vector<int> non_negatives;
 
   for (size_t i = 0; i < arr.size(); i++) {
     if (arr[i] < 0) {
       negatives.push_back(-arr[i]);
     } else {
-      nonNegatives.push_back(arr[i]);
+      non_negatives.push_back(arr[i]);
     }
   }
 
   RadixSort(negatives);
-  RadixSort(nonNegatives);
+  RadixSort(non_negatives);
 
   for (size_t i = 0; i < negatives.size() / 2; i++) {
     int temp = negatives[i];
@@ -216,107 +190,33 @@ void GolovanovDRadixSortOddEvenMergeMPI::RadixSortWithNegatives(std::vector<int>
   for (size_t i = 0; i < negatives.size(); i++) {
     arr.push_back(negatives[i]);
   }
-  for (size_t i = 0; i < nonNegatives.size(); i++) {
-    arr.push_back(nonNegatives[i]);
+  for (size_t i = 0; i < non_negatives.size(); i++) {
+    arr.push_back(non_negatives[i]);
   }
 }
 
 // bathcer net
 void GolovanovDRadixSortOddEvenMergeMPI::AddComparator(std::vector<std::pair<int, int>> &comparators, int a, int b) {
   if (a < b) {
-    comparators.push_back({a, b});
+    comparators.emplace_back(a, b);
   } else if (b < a) {
-    comparators.push_back({b, a});
+    comparators.emplace_back(b, a);
   }
-}
-
-void GolovanovDRadixSortOddEvenMergeMPI::MergeNet(const std::vector<int> &up, const std::vector<int> &down,
-                                                  std::vector<std::pair<int, int>> &comparators) {
-  int total_size = up.size() + down.size();
-
-  if (total_size <= 1) {
-    return;
-  }
-
-  if (total_size == 2) {
-    AddComparator(comparators, up[0], down[0]);
-    return;
-  }
-
-  std::vector<int> up_odd, down_odd, up_even, down_even;
-
-  for (size_t i = 0; i < up.size(); i++) {
-    if (i % 2 == 0) {
-      up_odd.push_back(up[i]);
-    } else {
-      up_even.push_back(up[i]);
-    }
-  }
-
-  for (size_t i = 0; i < down.size(); i++) {
-    if (i % 2 == 0) {
-      down_odd.push_back(down[i]);
-    } else {
-      down_even.push_back(down[i]);
-    }
-  }
-
-  MergeNet(up_odd, down_odd, comparators);
-  MergeNet(up_even, down_even, comparators);
-
-  std::vector<int> all_lines;
-  all_lines.reserve(up.size() + down.size());
-
-  for (int line : up) {
-    all_lines.push_back(line);
-  }
-
-  for (int line : down) {
-    all_lines.push_back(line);
-  }
-
-  for (size_t i = 1; i + 1 < all_lines.size(); i += 2) {
-    AddComparator(comparators, all_lines[i], all_lines[i + 1]);
-  }
-}
-
-void GolovanovDRadixSortOddEvenMergeMPI::BatcherSortNet(const std::vector<int> &lines,
-                                                        std::vector<std::pair<int, int>> &comparators) {
-  int size = lines.size();
-
-  if (size <= 1) {
-    return;
-  }
-
-  int up_size = size / 2;
-  int down_size = size - up_size;
-
-  std::vector<int> up(up_size);
-  std::vector<int> down(down_size);
-
-  for (int i = 0; i < up_size; i++) {
-    up[i] = lines[i];
-  }
-
-  for (int i = 0; i < down_size; i++) {
-    down[i] = lines[up_size + i];
-  }
-
-  BatcherSortNet(up, comparators);
-  BatcherSortNet(down, comparators);
-
-  MergeNet(up, down, comparators);
 }
 
 std::vector<std::pair<int, int>> GolovanovDRadixSortOddEvenMergeMPI::GenerateBatcherComparators(int num_processes) {
   std::vector<std::pair<int, int>> comparators;
-  std::vector<int> process_ids(num_processes);
-
-  for (int i = 0; i < num_processes; i++) {
-    process_ids[i] = i;
+  for (int p = 1; p < num_processes; p *= 2) {
+    for (int k = p; k >= 1; k /= 2) {
+      for (int j = k % p; j < num_processes - k; j += 2 * k) {
+        for (int i = 0; i < std::min(k, num_processes - j - k); i++) {
+          if ((j + i) / (p * 2) == (j + i + k) / (p * 2)) {
+            comparators.emplace_back(j + i, j + i + k);
+          }
+        }
+      }
+    }
   }
-
-  BatcherSortNet(process_ids, comparators);
   return comparators;
 }
 
@@ -325,7 +225,8 @@ std::vector<int> GolovanovDRadixSortOddEvenMergeMPI::MergeTwoSorted(const std::v
   std::vector<int> result;
   result.reserve(a.size() + b.size());
 
-  size_t i = 0, j = 0;
+  size_t i = 0;
+  size_t j = 0;
 
   while (i < a.size() && j < b.size()) {
     if (a[i] <= b[j]) {
@@ -350,4 +251,31 @@ std::vector<int> GolovanovDRadixSortOddEvenMergeMPI::MergeTwoSorted(const std::v
   return result;
 }
 
+void GolovanovDRadixSortOddEvenMergeMPI::BatcherMerge(std::vector<std::pair<int, int>> &comparators, int rank,
+                                                      std::vector<int> &local_data) {
+  for (size_t i = 0; i < comparators.size(); i++) {
+    size_t local_size = local_data.size();
+    std::vector<int> received_data(local_size);
+    std::vector<int> temp_data(local_size);
+    int a = comparators[i].first;
+    int b = comparators[i].second;
+
+    if (rank == a || rank == b) {
+      int partner = (rank == a) ? b : a;
+
+      MPI_Sendrecv(local_data.data(), local_size, MPI_INT, partner, 0, received_data.data(), local_size, MPI_INT,
+                   partner, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+      std::vector<int> merged = MergeTwoSorted(local_data, received_data);
+
+      if (rank == std::min(a, b)) {
+        std::copy(merged.begin(), merged.begin() + local_size, temp_data.begin());
+      } else {
+        std::copy(merged.begin() + local_size, merged.end(), temp_data.begin());
+      }
+
+      local_data = temp_data;
+    }
+  }
+}
 }  // namespace golovanov_d_radix_sort_odd_even_merge

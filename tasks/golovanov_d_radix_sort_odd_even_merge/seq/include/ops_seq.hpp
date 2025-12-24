@@ -19,8 +19,8 @@ class GolovanovDRadixSortOddEvenMergeSEQ : public BaseTask {
   bool RunImpl() override;
   bool PostProcessingImpl() override;
   // radix sort
-  static int GetDigit(int num, int digitPlace);
-  static void CountingSort(std::vector<int> &arr, int digitPlace);
+  static int GetDigit(int num, int digit_place);
+  static void CountingSort(std::vector<int> &arr, int digit_place);
   static void RadixSort(std::vector<int> &arr);
   static void RadixSortWithNegatives(std::vector<int> &arr);
 };

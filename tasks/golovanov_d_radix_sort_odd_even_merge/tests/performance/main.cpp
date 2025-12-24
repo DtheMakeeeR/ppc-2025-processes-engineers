@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 
-#include <tuple>
 #include <vector>
 
 #include "golovanov_d_radix_sort_odd_even_merge/common/include/common.hpp"
@@ -14,13 +13,15 @@ class GolovanovDRadixSortOddEvenMergePerfTest : public ppc::util::BaseRunPerfTes
  private:
   InType input_data_;
   std::vector<int> res_;
-  int count_ = 1000000;
+  int count_ = 10000000;
 
  public:
   void SetUp() override {
-    std::vector<int> v_int(0);
-    for (int i = count_; i >= 0; i--) {
-      v_int.push_back(i);
+    std::vector<int> v_int(count_);
+    int index = 0;
+    for (int i = count_; i > 0; i--) {
+      v_int[index] = i;
+      index++;
     }
     res_ = v_int;
     std::sort(res_.begin(), res_.end());
