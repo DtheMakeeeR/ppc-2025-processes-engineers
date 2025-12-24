@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <cstddef>
+#include <utility>
 #include <vector>
 
 #include "golovanov_d_radix_sort_odd_even_merge/common/include/common.hpp"
