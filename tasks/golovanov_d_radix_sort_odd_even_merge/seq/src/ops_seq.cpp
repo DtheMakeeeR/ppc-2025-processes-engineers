@@ -85,11 +85,11 @@ void GolovanovDRadixSortOddEvenMergeSEQ::RadixSortWithNegatives(std::vector<int>
   std::vector<int> negatives;
   std::vector<int> non_negatives;
 
-  for (size_t i = 0; i < arr.size(); i++) {
-    if (arr[i] < 0) {
-      negatives.push_back(-arr[i]);
+  for (int value : arr) {
+    if (value < 0) {
+      negatives.push_back(-value);
     } else {
-      non_negatives.push_back(arr[i]);
+      non_negatives.push_back(value);
     }
   }
 
@@ -102,16 +102,16 @@ void GolovanovDRadixSortOddEvenMergeSEQ::RadixSortWithNegatives(std::vector<int>
     negatives[negatives.size() - 1 - i] = temp;
   }
 
-  for (size_t i = 0; i < negatives.size(); i++) {
-    negatives[i] = -negatives[i];
+  for (int &negative : negatives) {
+    negative = -negative;
   }
 
   arr.clear();
-  for (size_t i = 0; i < negatives.size(); i++) {
-    arr.push_back(negatives[i]);
+  for (int negative : negatives) {
+    arr.push_back(negative);
   }
-  for (size_t i = 0; i < non_negatives.size(); i++) {
-    arr.push_back(non_negatives[i]);
+  for (int non_negative : non_negatives) {
+    arr.push_back(non_negative);
   }
 }
 

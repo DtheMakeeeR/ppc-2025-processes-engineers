@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <vector>
 
 #include "golovanov_d_radix_sort_odd_even_merge/common/include/common.hpp"
@@ -25,7 +26,7 @@ class GolovanovDRadixSortOddEvenMergePerfTest : public ppc::util::BaseRunPerfTes
     }
 
     res_ = v_int;
-    std::sort(res_.begin(), res_.end());
+    std::ranges::sort(res_);  // Использована ranges-версия алгоритма
 
     input_data_ = v_int;
   }
