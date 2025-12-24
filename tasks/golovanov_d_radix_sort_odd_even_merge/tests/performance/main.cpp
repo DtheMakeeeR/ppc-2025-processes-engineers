@@ -41,7 +41,8 @@ TEST_P(GolovanovDRadixSortOddEvenMergePerfTest, RunPerfModes) {
 }
 
 const auto kAllPerfTasks =
-    ppc::util::MakeAllPerfTasks<InType, GolovanovDRadixSortOddEvenMergeMPI, GolovanovDRadixSortOddEvenMergeSEQ>(PPC_SETTINGS_golovanov_d_radix_sort_odd_even_merge);
+    ppc::util::MakeAllPerfTasks<InType, GolovanovDRadixSortOddEvenMergeMPI, GolovanovDRadixSortOddEvenMergeSEQ>(
+        PPC_SETTINGS_golovanov_d_radix_sort_odd_even_merge);
 
 const auto kGtestValues = ppc::util::TupleToGTestValues(kAllPerfTasks);
 
