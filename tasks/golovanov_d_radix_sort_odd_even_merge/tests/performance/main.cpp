@@ -16,7 +16,7 @@ class GolovanovDRadixSortOddEvenMergePerfTest : public ppc::util::BaseRunPerfTes
  private:
   InType input_data_;
   std::vector<int> res_;
-  int count_ = 10000000;
+  int count_ = 10000001;
 
  public:
   void SetUp() override {

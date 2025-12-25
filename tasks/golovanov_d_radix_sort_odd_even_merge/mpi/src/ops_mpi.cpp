@@ -212,7 +212,9 @@ std::vector<std::pair<int, int>> GolovanovDRadixSortOddEvenMergeMPI::GenerateBat
       for (int j = k % power; j < num_processes - k; j += 2 * k) {
         for (int i = 0; i < std::min(k, num_processes - j - k); i++) {
           if ((j + i) / (power * 2) == (j + i + k) / (power * 2)) {
-            comparators.emplace_back(j + i, j + i + k);
+            const auto first_index = j + i;
+            const auto second_index = first_index + k;  
+            AddComparator(comparators, first_index, second_index);
           }
         }
       }
